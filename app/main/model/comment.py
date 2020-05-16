@@ -12,7 +12,12 @@ class Comment(Content):
     commented_content_id = db.Column(db.Integer, db.ForeignKey('content.id'), nullable=False)
 
     # RELATIONSHIPS
-    # commented_content [ backref of Content -> comments ]
+    commented_content = db.relationship(
+        'Content',
+        back_populates='comments',
+        lazy=True,
+        foreign_keys='Comment.commented_content_id'
+    )
 
     # INHERITANCE
     __mapper_args__ = {

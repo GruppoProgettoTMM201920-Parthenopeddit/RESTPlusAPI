@@ -1,14 +1,11 @@
+import errno
 import os
+import shutil
 import unittest
 
-from app.main import db
-from app.main.model.user import User
-from app.main.model.content import Content
-from app.main.model.comment import Comment
-from app.main.model.post import Post
-from app.main.model.review import Review
-from app.main.model.likes import likes
-from app.main.model.dislikes import Dislikes
+from flask_migrate import init, migrate, upgrade
+
+from mock_data import populate_db
 
 
 def register(app):
@@ -21,42 +18,51 @@ def register(app):
             return 0
         return 1
 
-    @app.cli.command("mockdb")
-    def mock_db():
-        """Mocks the database"""
-        createdb()
-        populatedb()
+    @app.cli.command("resetdb")
+    def resetdb():
+        """Resets the database"""
+        print("deleting old db")
+        delete_db()
+        print("Creating db")
+        create_db()
+        print("Populating db with mock data")
+        populate_db()
+        print("Done")
+
+    @app.cli.command("deletedb")
+    def deletedb():
+        """Deletes the database"""
+        delete_db()
 
     @app.cli.command("createdb")
     def createdb():
-        """Deletes the database"""
-        os.system("flask db init")
-        os.system("flask db migrate")
-        os.system("flask db upgrade")
+        """Creates the database"""
+        create_db()
 
     @app.cli.command("populatedb")
     def populatedb():
         """Populates the database with mockdata"""
-        u1 = User(id="user1")
-        db.session.add(u1)
-        u2 = User(id="user2")
-        db.session.add(u2)
-        u3 = User(id="user3")
-        db.session.add(u3)
+        populate_db()
 
-        p1 = Post(id=1, author_id="user1", title="post 1 of user1", body="Hello")
-        db.session.add(p1)
-        p2 = Post(id=2, author_id="user2", title="post 1 of user2", body="Hello world")
-        db.session.add(p2)
+    def delete_db():
+        def errorRemoveReadonly(func, path, exc):
+            excvalue = exc[1]
+            if func in (os.rmdir, os.remove) and excvalue.errno == errno.EACCES:
+                # change the file to be readable,writable,executable: 0777
+                os.chmod(path, os.stat.S_IRWXU | os.stat.S_IRWXG | os.stat.S_IRWXO)
+                # retry
+                func(path)
+            else:
+                raise Exception("error in removing migrations folder")
+        try:
+            shutil.rmtree("./migrations", ignore_errors=False, onerror=errorRemoveReadonly)
+            os.remove("./app/main/flask_boilerplate_main.db")
+        except:
+            pass
 
-        c1 = Comment(id=3, author_id="user3", body="Hi new guy", commented_content_id="1")
-        db.session.add(c1)
-        c2 = Comment(id=4, author_id="user2", body="He is not new, dumbass", commented_content_id="3")
-        db.session.add(c2)
-
-        u1.liked_content.append(c1)
-        u3.liked_content.append(c2)
-
-        db.session.commit()
+    def create_db():
+        init()
+        migrate()
+        upgrade()
 
     pass

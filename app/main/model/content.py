@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from .dislikes import dislikes
 from .likes import likes
 from .. import db
 
@@ -17,10 +18,14 @@ class Content(db.Model):
     author_id = db.Column(db.String, db.ForeignKey('user.id'), nullable=False)
 
     # RELATIONSHIPS
-    # author [ backref of User -> published_content ]
+    author = db.relationship(
+        'User',
+        back_populates='published_content',
+        lazy=True
+    )
     comments = db.relationship(
         'Comment',
-        backref='commented_content',
+        back_populates='commented_content',
         lazy='dynamic',
         foreign_keys='Comment.commented_content_id'
     )
@@ -28,6 +33,12 @@ class Content(db.Model):
         'User',
         secondary=likes,
         back_populates='liked_content',
+        lazy='dynamic'
+    )
+    disliked_by_users = db.relationship(
+        'User',
+        secondary=dislikes,
+        back_populates='disliked_content',
         lazy='dynamic'
     )
 
