@@ -6,27 +6,46 @@ from app.main.model.post import Post
 from app.main.model.review import Review
 from app.main.model.likes import likes
 from app.main.model.dislikes import dislikes
+from app.main.model.board import Board
+from app.main.model.group import Group
+from app.main.model.course import Course
 
 
 def populate_db():
-    u1 = User(id="user1")
-    db.session.add(u1)
-    u2 = User(id="user2")
-    db.session.add(u2)
-    u3 = User(id="user3")
-    db.session.add(u3)
+    user1 = User(id="user1")
+    db.session.add(user1)
+    user2 = User(id="user2")
+    db.session.add(user2)
+    user3 = User(id="user3")
+    db.session.add(user3)
 
-    p1 = Post(id=1, author_id="user1", title="post 1 of user1", body="Hello")
-    db.session.add(p1)
-    p2 = Post(id=2, author_id="user2", title="post 1 of user2", body="Hello world")
-    db.session.add(p2)
+    db.session.commit()
 
-    c1 = Comment(id=3, author_id="user3", body="Hi new guy", commented_content_id="1")
-    db.session.add(c1)
-    c2 = Comment(id=4, author_id="user2", body="He is not new, dumbass", commented_content_id="3")
-    db.session.add(c2)
+    post1 = Post(author=user1, title="post 1 di user1", body="Ciao")
+    db.session.add(post1)
+    post2 = Post(author=user2, title="post 1 di user2", body="Hello world")
+    db.session.add(post2)
 
-    u1.liked_content.append(c1)
-    u3.liked_content.append(c2)
+    db.session.commit()
+
+    comment1 = Comment(author=user3, body="Ciao, sei nuovo?", commented_content=post1)
+    db.session.add(comment1)
+    comment2 = Comment(author=user2, body="Mi sembra ovvio", commented_content=comment1)
+    db.session.add(comment2)
+
+    db.session.commit()
+
+    user1.liked_content.append(comment1)
+    user3.liked_content.append(comment2)
+
+    db.session.commit()
+
+    course1 = Course(name="TERMINALI MOBILI E MULTIMEDIALITA")
+    db.session.add(course1)
+
+    db.session.commit()
+
+    review1 = Review(author=user2, reviewed_course=course1, body="Il miglior corso di sempre", score_liking=5, score_difficulty=3)
+    db.session.add(review1)
 
     db.session.commit()
