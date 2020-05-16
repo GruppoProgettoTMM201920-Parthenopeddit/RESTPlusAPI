@@ -1,5 +1,6 @@
 from datetime import datetime
 from app.main import db
+from app.main.model.likes import likes
 
 
 class User(db.Model):
@@ -14,6 +15,12 @@ class User(db.Model):
     published_content = db.relationship(
         'Content',
         backref='author',
+        lazy='dynamic'
+    )
+    liked_content = db.relationship(
+        'Content',
+        secondary=likes,
+        back_populates='liked_by_users',
         lazy='dynamic'
     )
 

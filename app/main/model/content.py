@@ -1,5 +1,7 @@
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
+
+from .likes import likes
 from .. import db
 
 
@@ -21,6 +23,12 @@ class Content(db.Model):
         backref='commented_content',
         lazy='dynamic',
         foreign_keys='Comment.commented_content_id'
+    )
+    liked_by_users = db.relationship(
+        'User',
+        secondary=likes,
+        back_populates='liked_content',
+        lazy='dynamic'
     )
 
     # AGGREGATED COLUMNS

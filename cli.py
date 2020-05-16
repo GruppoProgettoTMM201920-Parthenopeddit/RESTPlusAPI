@@ -2,9 +2,13 @@ import os
 import unittest
 
 from app.main import db
+from app.main.model.user import User
+from app.main.model.content import Content
 from app.main.model.comment import Comment
 from app.main.model.post import Post
-from app.main.model.user import User
+from app.main.model.review import Review
+from app.main.model.likes import likes
+from app.main.model.dislikes import Dislikes
 
 
 def register(app):
@@ -49,6 +53,9 @@ def register(app):
         db.session.add(c1)
         c2 = Comment(id=4, author_id="user2", body="He is not new, dumbass", commented_content_id="3")
         db.session.add(c2)
+
+        u1.liked_content.append(c1)
+        u3.liked_content.append(c2)
 
         db.session.commit()
 

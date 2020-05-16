@@ -1,6 +1,3 @@
-from datetime import datetime
-from sqlalchemy.ext.hybrid import hybrid_property
-
 from .content import Content
 from .. import db
 
