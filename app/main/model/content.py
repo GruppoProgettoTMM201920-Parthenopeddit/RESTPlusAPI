@@ -1,8 +1,9 @@
 from datetime import datetime
+from sqlalchemy.ext.hybrid import hybrid_property
 from .. import db
 
 
-class Content(db.Model.__base__):
+class Content(db.Model):
     __tablename__ = 'content'
 
     # DATA COLUMNS
@@ -14,14 +15,22 @@ class Content(db.Model.__base__):
     author_id = db.Column(db.String, db.ForeignKey('user.id'), nullable=False)
 
     # RELATIONSHIPS
-    author = db.relationship(
-        'User',
-        back_populates='published_content',
-        lazy='dynamic'
-    )
+    # author [ backref of User -> published_content ]
     comments = db.relationship(
         'Comment',
+        backref='commented_content',
+        lazy='dynamic',
+        foreign_keys='Comment.commented_content_id'
     )
+
+    # AGGREGATED COLUMNS
+    @hybrid_property
+    def comments_num(self):
+        sum = self.comments.count()
+        if sum > 0:
+            for content in self.comments.all():
+                sum += content.comments_num
+        return sum
 
     # INHERITANCE
     type = db.Column(db.Text())

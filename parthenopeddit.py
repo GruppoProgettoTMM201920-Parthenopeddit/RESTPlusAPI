@@ -2,7 +2,7 @@ import os
 from flask_migrate import Migrate
 from app import blueprint
 from app.main import create_app, db
-from app.main.model import user, post, comment, content
+from app.main.model import user, content, post, comment
 import cli
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')

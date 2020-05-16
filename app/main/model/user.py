@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from app.main import db
 
 
@@ -14,6 +13,9 @@ class User(db.Model):
     # RELATIONSHIPS
     published_content = db.relationship(
         'Content',
-        back_populates='author',
+        backref='author',
         lazy='dynamic'
     )
+
+    def __repr__(self) -> str:
+        return "<User [{}]>".format(self.id)
