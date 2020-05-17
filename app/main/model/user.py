@@ -1,8 +1,9 @@
 from datetime import datetime
+
 from app.main import db
-from app.main.model.groups_join_users import is_part_of
 from app.main.model.dislikes import dislikes
 from app.main.model.follows import follows
+from app.main.model.groups_join_users import is_part_of
 from app.main.model.likes import likes
 
 
@@ -11,8 +12,8 @@ class User(db.Model):
 
     # DATA COLUMNS
     id = db.Column(db.String, primary_key=True, autoincrement=False)
-    nome_visualizzato = db.Column(db.String(32), index=True, unique=True, nullable=True)
-    registrato_il = db.Column(db.DateTime, default=datetime.utcnow())
+    display_name = db.Column(db.String(32), index=True, unique=True, nullable=True)
+    registered_on = db.Column(db.DateTime, default=datetime.utcnow())
 
     # RELATIONSHIPS
     published_content = db.relationship(
@@ -35,15 +36,12 @@ class User(db.Model):
     followed_courses = db.relationship(
         'Course',
         secondary=follows,
-        back_populates='following_users',
+        back_populates='followers',
         lazy='dynamic'
     )
     joined_groups = db.relationship(
         'Group',
         secondary=is_part_of,
-        back_populates='member_users',
+        back_populates='members',
         lazy='dynamic'
     )
-
-    def __repr__(self) -> str:
-        return "<User [{}]>".format(self.id)

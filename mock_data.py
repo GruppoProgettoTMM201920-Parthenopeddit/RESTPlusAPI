@@ -48,4 +48,7 @@ def populate_db():
     review1 = Review(author=user2, reviewed_course=course1, body="Il miglior corso di sempre", score_liking=5, score_difficulty=3)
     db.session.add(review1)
 
+    review2 = Review(author=user3, reviewed_course=course1, body="Troppo difficile", score_liking=2, score_difficulty=5)
+    db.session.add(review2)
+
     db.session.commit()

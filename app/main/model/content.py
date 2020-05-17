@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from .dislikes import dislikes
@@ -50,6 +51,14 @@ class Content(db.Model):
             for content in self.comments.all():
                 sum += content.comments_num
         return sum
+
+    @hybrid_property
+    def likes_num(self):
+        return self.likes.count()
+
+    @hybrid_property
+    def dislikes_num(self):
+        return self.dislikes.count()
 
     # INHERITANCE
     type = db.Column(db.Text())

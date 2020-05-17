@@ -1,8 +1,9 @@
 from flask import Blueprint
 from flask_restplus import Api
 from .main.namespaces.auth_namespace import api as auth_namespace
-from .main.namespaces.post_namespace import api as post_namespace
+from .main.namespaces.posts_namespace import api as post_namespace
 from .main.namespaces.comments_namespace import api as comments_namespace
+from .main.namespaces.reviews_namespace import api as reviews_namespace
 
 blueprint = Blueprint('api', __name__)
 authorizations = {
@@ -22,5 +23,6 @@ api = Api(
 )
 
 api.add_namespace(auth_namespace, path='/auth')
-api.add_namespace(post_namespace, path='/post')
+api.add_namespace(post_namespace, path='/posts')
 api.add_namespace(comments_namespace, path='/comments')
+api.add_namespace(reviews_namespace, path='/reviews')

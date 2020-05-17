@@ -1,3 +1,5 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from .. import db
 
 
@@ -14,6 +16,11 @@ class Board(db.Model):
         back_populates='posted_to_board',
         lazy='dynamic'
     )
+
+    # AGGREGATED COLUMNS
+    @hybrid_property
+    def posts_num(self):
+        return self.posts.count()
 
     # INHERITANCE
     type = db.Column(db.Text())
