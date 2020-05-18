@@ -1,6 +1,7 @@
 from app.main import db
 from app.main.model.comment import Comment
 from app.main.model.content import Content
+from app.main.model.group import Group
 from app.main.model.user import User
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
 
@@ -52,15 +53,44 @@ def get_comment_by_id(token, user_id, comment_id):
     return comment, 200
 
 
-def like_comment_by_id(token, user_id, comment_id):
+def __is_comment_accessible(user_id, comment_id):
     comment = Comment.query.filter(Comment.id == comment_id).first_or_404()
     user = User.query.filter(User.id == user_id).first_or_404()
+
+    content = comment
+    while content.type == 'comment':
+        content = comment.commented_content
+    if content.type == 'post':
+        post = content
+        if post.posted_to_board_id is not None:
+            board = post.posted_to_board
+            if board.type == 'group':
+                group = board
+                if group != user.joined_groups.filter(Group.id == group.id).first():
+                    return False, None, None
+
+    return True, user, comment
+
+
+def like_comment_by_id(token, user_id, comment_id):
+    accessible, user, comment = __is_comment_accessible(user_id, comment_id)
+    if not accessible:
+        response_object = {
+            'status': 'error',
+            'message': "Commented post is private",
+        }
+        return response_object, 401
 
     return like_content(user, comment)
 
 
 def dislike_comment_by_id(token, user_id, comment_id):
-    comment = Comment.query.filter(Comment.id == comment_id).first_or_404()
-    user = User.query.filter(User.id == user_id).first_or_404()
+    accessible, user, comment = __is_comment_accessible(user_id, comment_id)
+    if not accessible:
+        response_object = {
+            'status': 'error',
+            'message': "Commented post is private",
+        }
+        return response_object, 401
 
     return dislike_content(user, comment)

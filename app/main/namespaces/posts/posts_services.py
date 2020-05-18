@@ -1,6 +1,7 @@
 from app.main import db
 from app.main.model.board import Board
 from app.main.model.content import Content
+from app.main.model.group import Group
 from app.main.model.post import Post
 from app.main.model.user import User
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
@@ -43,10 +44,10 @@ def __is_post_accessible(user_id, post_id):
         board = post.posted_to_board
         if board.type == 'group':
             group = board
-            if group not in user.boards.all():
+            if group != user.joined_groups.filter(Group.id == group.id).first():
                 return False, None, None
-    else:
-        return True, user, post
+
+    return True, user, post
 
 
 def get_post_by_id(token, user_id, post_id):

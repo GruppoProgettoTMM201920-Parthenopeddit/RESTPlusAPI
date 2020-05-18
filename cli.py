@@ -56,7 +56,7 @@ def register(app):
                 raise Exception("error in removing migrations folder")
         try:
             shutil.rmtree("./migrations", ignore_errors=False, onerror=errorRemoveReadonly)
-            os.remove("./app/main/flask_boilerplate_main.db")
+            os.remove("flask_boilerplate_main.db")
         except:
             pass
 

@@ -2,7 +2,7 @@ from enum import Enum
 
 from flask_restplus import fields
 
-from app.main.config import COMMENTS_RECURSIVE_DEPTH
+from config import COMMENTS_RECURSIVE_DEPTH
 
 simple_user_mapping = {
     'id': fields.String(description='User id'),
@@ -10,7 +10,7 @@ simple_user_mapping = {
     'registered_on': fields.DateTime(description='Date and time of first login'),
 }
 extra_user_mapping = {
-    # TODO ALL USER FIELDS
+    # TODO map all user fields
 }
 complete_user_mapping = dict(simple_user_mapping, **extra_user_mapping)
 

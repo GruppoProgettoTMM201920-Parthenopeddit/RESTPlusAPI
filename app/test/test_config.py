@@ -4,7 +4,7 @@ import unittest
 from flask import current_app
 from flask_testing import TestCase
 
-from app.main.config import basedir
+from config import basedir
 from parthenopeddit import app
 
 

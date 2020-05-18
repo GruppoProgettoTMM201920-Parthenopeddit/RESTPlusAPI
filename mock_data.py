@@ -44,8 +44,8 @@ def populate_db():
     course1 = Course(name="TERMINALI MOBILI E MULTIMEDIALITA")
     db.session.add(course1)
 
-    course1.members.append(user2)
-    course1.members.append(user3)
+    course1.followers.append(user2)
+    course1.followers.append(user3)
 
     review1 = Review(author=user2, reviewed_course=course1, body="Il miglior corso di sempre", score_liking=5, score_difficulty=3)
     db.session.add(review1)
