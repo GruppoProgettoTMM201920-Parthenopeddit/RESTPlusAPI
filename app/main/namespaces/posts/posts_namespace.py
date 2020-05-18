@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.models_definition import get_new_post_model, get_content_with_comments_model, \
     ContentType, get_content_model
-from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id
+from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id, dislike_post_by_id, like_post_by_id
 from app.main.util.auth_decorator import token_authenticated
 
 api = Namespace('Posts', description="User's post framework")
@@ -37,3 +37,21 @@ class GetPostWithComments(Resource):
     def get(self, token, user_id, post_id):
         """Get specific post, with comments"""
         return get_post_by_id(token, user_id, post_id)
+
+
+@api.route('/<int:post_id>/like')
+@api.param('post_id', 'The Post identifier')
+class LikePost(Resource):
+    @token_authenticated
+    def post(self, token, user_id, post_id):
+        """Express like to specific post"""
+        return like_post_by_id(token, user_id, post_id)
+
+
+@api.route('/<int:post_id>/dislike')
+@api.param('post_id', 'The Post identifier')
+class DislikePost(Resource):
+    @token_authenticated
+    def post(self, token, user_id, post_id):
+        """Express dislike to specific post"""
+        return dislike_post_by_id(token, user_id, post_id)

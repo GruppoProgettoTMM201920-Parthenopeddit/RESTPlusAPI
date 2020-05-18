@@ -23,7 +23,7 @@ class Reviews(Resource):
 @api.param('review_id', 'The Review identifier')
 class GetReview(Resource):
     @token_authenticated
-    @api.marshal_with(get_content_model(api, ContentType.COMMENT))
+    @api.marshal_with(get_content_model(api, ContentType.REVIEW))
     def get(self, token, user_id, review_id):
         """Get specific post"""
         return get_review_by_id(token, user_id, review_id)

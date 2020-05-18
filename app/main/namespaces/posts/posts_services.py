@@ -1,5 +1,6 @@
 from app.main import db
 from app.main.model.board import Board
+from app.main.model.content import Content
 from app.main.model.post import Post
 from app.main.model.user import User
 
@@ -21,7 +22,9 @@ def save_new_post(token, user_id, payload):
     title = payload['title']
     body = payload['body']
     new_post = Post(author_id=author_id, title=title, body=body, posted_to_board_id=board_id)
-    save_changes(new_post)
+
+    db.session.add(new_post)
+    db.session.commit()
 
     response_object = {
         'status': 'success',
@@ -31,21 +34,89 @@ def save_new_post(token, user_id, payload):
     return response_object, 200
 
 
-def get_post_by_id(token, user_id, post_id):
+def __is_post_accessible(user_id, post_id):
     post = Post.query.filter(Post.id == post_id).first_or_404()
     user = User.query.filter(User.id == user_id).first_or_404()
 
     if post.posted_to_board_id is not None:
-        if post.posted_to_board not in user.boards.all():
-            response_object = {
-                'status': 'error',
-                'message': "Post is private",
-            }
-            return response_object, 401
+        board = post.posted_to_board
+        if board.type == 'group':
+            group = board
+            if group not in user.boards.all():
+                return False, None, None
+    else:
+        return True, user, post
+
+
+def get_post_by_id(token, user_id, post_id):
+    accessible, user, post = __is_post_accessible(user_id, post_id)
+    if not accessible:
+        response_object = {
+            'status': 'error',
+            'message': "Post is private",
+        }
+        return response_object, 401
 
     return post, 200
 
 
-def save_changes(data):
-    db.session.add(data)
-    db.session.commit()
+def like_post_by_id(token, user_id, post_id):
+    accessible, user, post = __is_post_accessible(user_id, post_id)
+    if not accessible:
+        response_object = {
+            'status': 'error',
+            'message': "Post is private",
+        }
+        return response_object, 401
+
+    if post == user.liked_content.filter(Content.id == post_id).first():
+        user.liked_content.remove(post)
+        db.session.commit()
+
+        response_object = {
+            'status': 'success',
+            'message': "User removed like from post {}".format(post_id),
+        }
+        return response_object, 201
+    else:
+        if post == user.disliked_content.filter(Content.id == post_id).first():
+            user.disliked_content.remove(post)
+        user.liked_content.append(post)
+        db.session.commit()
+
+        response_object = {
+            'status': 'success',
+            'message': "User liked post {}".format(post_id),
+        }
+        return response_object, 201
+
+
+def dislike_post_by_id(token, user_id, post_id):
+    accessible, user, post = __is_post_accessible(user_id, post_id)
+    if not accessible:
+        response_object = {
+            'status': 'error',
+            'message': "Post is private",
+        }
+        return response_object, 401
+
+    if post == user.disliked_content.filter(Content.id == post_id).first():
+        user.disliked_content.remove(post)
+        db.session.commit()
+
+        response_object = {
+            'status': 'success',
+            'message': "User removed dislike from post {}".format(post_id),
+        }
+        return response_object, 201
+    else:
+        if post == user.liked_content.filter(Content.id == post_id).first():
+            user.liked_content.remove(post)
+        user.disliked_content.append(post)
+        db.session.commit()
+
+        response_object = {
+            'status': 'success',
+            'message': "User disliked post {}".format(post_id),
+        }
+        return response_object, 201

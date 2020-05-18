@@ -15,7 +15,6 @@ content_mapping = {
     'body': fields.String(description='Message body of the content'),
     'timestamp': fields.DateTime(description='Date and time of publication'),
     'author_id': fields.String(description='User id of the author'),
-    'author_display_name': fields.String(description='Displayed name of the author'),
     'comments_num': fields.Integer(description='number of comments received'),
     'likes_num': fields.Integer(description='number of likes received'),
     'dislikes_num': fields.Integer(description='number of dislikes received'),

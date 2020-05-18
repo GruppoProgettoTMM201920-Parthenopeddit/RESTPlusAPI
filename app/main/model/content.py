@@ -43,11 +43,6 @@ class Content(db.Model):
         lazy='dynamic'
     )
 
-    # AGGREGATED COLUMNS
-    @hybrid_property
-    def author_display_name(self):
-        return self.author.display_name
-
     @hybrid_property
     def comments_num(self):
         sum = self.comments.count()
