@@ -1,10 +1,13 @@
 from datetime import datetime
 
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from app.main import db
+from app.main.model.board import Board
 from app.main.model.dislikes import dislikes
-from app.main.model.follows import follows
-from app.main.model.groups_join_users import is_part_of
+from app.main.model.is_member import is_member
 from app.main.model.likes import likes
+from app.main.model.post import Post
 
 
 class User(db.Model):
@@ -33,15 +36,18 @@ class User(db.Model):
         back_populates='disliked_by_users',
         lazy='dynamic'
     )
-    followed_courses = db.relationship(
-        'Course',
-        secondary=follows,
-        back_populates='followers',
-        lazy='dynamic'
-    )
-    joined_groups = db.relationship(
-        'Group',
-        secondary=is_part_of,
+    boards = db.relationship(
+        'Board',
+        secondary=is_member,
         back_populates='members',
         lazy='dynamic'
     )
+
+    def get_visible_posts(self):
+        return Post.query.filter(
+            Post.posted_to_board_id.in_(
+                self.boards.with_entities(Board.id)
+            )
+        ).union(
+            Post.query.filter(Post.posted_to_board_id == None)
+        )

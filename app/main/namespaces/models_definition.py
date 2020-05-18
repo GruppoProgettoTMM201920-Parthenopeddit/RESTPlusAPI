@@ -51,12 +51,35 @@ new_review_mapping = {
     'score_difficulty': fields.Integer(required=False,
                                        description='0 to 5 score of difficulty for the reviewed course'),
 }
+page_selection_mapping = {
+    'page': fields.Integer(),
+    'per_page': fields.Integer(),
+}
 
 
 class ContentType(Enum):
-    POST = {'map': post_mapping, 'label': 'post_{}'}
-    REVIEW = {'map': review_mapping, 'label': 'comment_{}'}
-    COMMENT = {'map': comment_mapping, 'label': 'review_{}'}
+    # POST = {'map': post_mapping, 'label': 'post_{}'}
+    # REVIEW = {'map': review_mapping, 'label': 'comment_{}'}
+    # COMMENT = {'map': comment_mapping, 'label': 'review_{}'}
+    POST = 'post'
+    REVIEW = 'review'
+    COMMENT = 'comment'
+
+    def getMap(self):
+        switcher = {
+            self.POST: post_mapping,
+            self.REVIEW: review_mapping,
+            self.COMMENT: comment_mapping,
+        }
+        return switcher.get(self)
+
+    def getLabel(self):
+        switcher = {
+            self.POST: 'post_{}',
+            self.REVIEW: 'review_{}',
+            self.COMMENT: 'comment_{}',
+        }
+        return switcher.get(self)
 
 
 def get_user_model(api):
@@ -87,9 +110,27 @@ def get_new_review_model(api):
     return api.model('new review', new_review_mapping)
 
 
+def __get_recursive_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH-1):
+    comments_mapping = ContentType.COMMENT.getMap().copy()
+    if recursive_steps:
+        comments_mapping['comments'] = fields.List(
+            fields.Nested(
+                __get_recursive_comments_model(api, recursive_steps - 1)
+            )
+        )
+    return api.model(ContentType.COMMENT.getLabel().format(recursive_steps), comments_mapping)
+
+
 def get_content_with_comments_model(api, content_type, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
-    rec_content_mapping = content_type['map'].copy()
+    rec_content_mapping = content_type.getMap().copy()
     if recursive_steps:
         rec_content_mapping['comments'] = fields.List(
-            fields.Nested(get_content_with_comments_model(api, content_type, recursive_steps - 1)))
-    return api.model(content_type['label'].format(recursive_steps), rec_content_mapping)
+            fields.Nested(
+                __get_recursive_comments_model(api, recursive_steps - 1)
+            )
+        )
+    return api.model(content_type.getLabel().format(recursive_steps), rec_content_mapping)
+
+
+def get_page_selection_model(api):
+    return api.model('page selection model', page_selection_mapping)

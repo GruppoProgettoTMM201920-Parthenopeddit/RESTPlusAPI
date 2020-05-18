@@ -5,6 +5,7 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 COMMENTS_RECURSIVE_DEPTH = 5
+DEFAULT_POSTS_PER_PAGE_AMOUNT = 20
 
 
 class Config:

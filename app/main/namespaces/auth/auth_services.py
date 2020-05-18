@@ -7,10 +7,7 @@ from app.main.util.UniparthenopeAPI.requests import login_request
 
 def login(token, user_id):
     def __first_login():
-        new_user = User(
-            id=user_id,
-            registrato_il=datetime.utcnow()
-        )
+        new_user = User(id=user_id)
 
         save_changes(new_user)
         response_object = {
@@ -40,7 +37,7 @@ def login(token, user_id):
 
     result, result_code = login_request(token)
     if result_code == 200:
-        user = User.query.filter_by(id=user_id).first()
+        user = User.query.filter(User.id == user_id).first()
         if not user:
             return __first_login()
         else:

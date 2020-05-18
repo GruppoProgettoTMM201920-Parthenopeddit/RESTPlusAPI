@@ -1,6 +1,6 @@
 from flask_restplus import Resource, Namespace
-from ..services.auth_services import login
-from app.main.auth.decorators import token_required
+from app.main.namespaces.auth.auth_services import login
+from app.main.util.auth_decorator import token_required
 
 api = Namespace('Authentication', description='authentication framework')
 

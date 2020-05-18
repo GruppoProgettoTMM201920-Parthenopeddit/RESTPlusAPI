@@ -4,7 +4,6 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from .board import Board
-from .follows import follows
 from .review import Review
 from .. import db
 
@@ -21,18 +20,8 @@ class Course(Board):
         back_populates='reviewed_course',
         lazy='dynamic'
     )
-    followers = db.relationship(
-        'User',
-        secondary=follows,
-        back_populates='followed_courses',
-        lazy='dynamic'
-    )
 
     # AGGREGATED COLUMNS
-    @hybrid_property
-    def followers_num(self):
-        return self.followers.count()
-
     @hybrid_property
     def reviews_count(self):
         return self.reviews.count()
