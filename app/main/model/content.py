@@ -53,11 +53,11 @@ class Content(db.Model):
 
     @hybrid_property
     def likes_num(self):
-        return self.likes.count()
+        return self.liked_by_users.count()
 
     @hybrid_property
     def dislikes_num(self):
-        return self.dislikes.count()
+        return self.disliked_by_users.count()
 
     # INHERITANCE
     type = db.Column(db.Text())

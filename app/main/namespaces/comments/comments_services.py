@@ -2,6 +2,7 @@ from app.main import db
 from app.main.model.comment import Comment
 from app.main.model.content import Content
 from app.main.model.user import User
+from app.main.namespaces.like_dislike_framework import like_content, dislike_content
 
 
 def save_new_comment(token, user_id, payload):
@@ -24,7 +25,8 @@ def save_new_comment(token, user_id, payload):
     author_id = user_id
     body = payload['body']
     new_comment = Comment(author_id=author_id, body=body, commented_content_id=commented_content_id)
-    save_changes(new_comment)
+    db.session.add(new_comment)
+    db.session.commit()
 
     response_object = {
         'status': 'success',
@@ -37,16 +39,9 @@ def save_new_comment(token, user_id, payload):
 def get_comment_by_id(token, user_id, comment_id):
     comment = Comment.query.filter(Comment.id == comment_id).first_or_404()
     user = User.query.filter(User.id == user_id).first_or_404()
-
-    print(comment)
-
     commented_content = comment.commented_content
-    print(commented_content)
-
-    print(commented_content.type)
     if commented_content.type == 'post':
         post = commented_content
-        print(post.posted_to_board_id)
         if post.posted_to_board_id is not None:
             response_object = {
                 'status': 'error',
@@ -57,6 +52,15 @@ def get_comment_by_id(token, user_id, comment_id):
     return comment, 200
 
 
-def save_changes(data):
-    db.session.add(data)
-    db.session.commit()
+def like_comment_by_id(token, user_id, comment_id):
+    comment = Comment.query.filter(Comment.id == comment_id).first_or_404()
+    user = User.query.filter(User.id == user_id).first_or_404()
+
+    return like_content(user, comment)
+
+
+def dislike_comment_by_id(token, user_id, comment_id):
+    comment = Comment.query.filter(Comment.id == comment_id).first_or_404()
+    user = User.query.filter(User.id == user_id).first_or_404()
+
+    return dislike_content(user, comment)

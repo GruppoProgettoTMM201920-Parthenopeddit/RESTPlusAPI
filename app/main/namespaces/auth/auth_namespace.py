@@ -15,5 +15,4 @@ class UserLogin(Resource):
     @token_required
     def get(self, token, user_id):
         """Login user"""
-        print("user {} requested login".format(user_id))
         return login(token, user_id)

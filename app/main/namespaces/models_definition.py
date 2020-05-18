@@ -4,11 +4,15 @@ from flask_restplus import fields
 
 from app.main.config import COMMENTS_RECURSIVE_DEPTH
 
-user_mapping = {
+simple_user_mapping = {
     'id': fields.String(description='User id'),
     'display_name': fields.String(description='Displayed name'),
     'registered_on': fields.DateTime(description='Date and time of first login'),
 }
+extra_user_mapping = {
+    # TODO ALL USER FIELDS
+}
+complete_user_mapping = dict(simple_user_mapping, **extra_user_mapping)
 
 content_mapping = {
     'id': fields.Integer(description='Content id'),
@@ -83,8 +87,12 @@ class ContentType(Enum):
         return switcher.get(self)
 
 
-def get_user_model(api):
-    return api.model('user', user_mapping)
+def get_complete_user_model(api):
+    return api.model('user', complete_user_mapping)
+
+
+def get_simple_user_model(api):
+    return api.model('user_simplified', simple_user_mapping)
 
 
 def get_new_post_model(api):
@@ -101,7 +109,7 @@ def get_new_review_model(api):
 
 def get_content_model(api, content_type):
     content_model = content_type.getMap().copy()
-    content_model['author'] = fields.Nested(get_user_model(api))
+    content_model['author'] = fields.Nested(get_simple_user_model(api))
     return api.model(content_type.getLabel(), content_model)
 
 
@@ -118,7 +126,7 @@ def __get_recursive_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH
 
 def get_content_with_comments_model(api, content_type, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
     rec_content_mapping = content_type.getMap().copy()
-    rec_content_mapping['author'] = fields.Nested(get_user_model(api))
+    rec_content_mapping['author'] = fields.Nested(get_simple_user_model(api))
     if recursive_steps:
         rec_content_mapping['comments'] = fields.List(
             fields.Nested(

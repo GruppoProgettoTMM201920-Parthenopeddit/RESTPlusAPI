@@ -3,6 +3,7 @@ from app.main.model.board import Board
 from app.main.model.content import Content
 from app.main.model.post import Post
 from app.main.model.user import User
+from app.main.namespaces.like_dislike_framework import like_content, dislike_content
 
 
 def save_new_post(token, user_id, payload):
@@ -69,26 +70,7 @@ def like_post_by_id(token, user_id, post_id):
         }
         return response_object, 401
 
-    if post == user.liked_content.filter(Content.id == post_id).first():
-        user.liked_content.remove(post)
-        db.session.commit()
-
-        response_object = {
-            'status': 'success',
-            'message': "User removed like from post {}".format(post_id),
-        }
-        return response_object, 201
-    else:
-        if post == user.disliked_content.filter(Content.id == post_id).first():
-            user.disliked_content.remove(post)
-        user.liked_content.append(post)
-        db.session.commit()
-
-        response_object = {
-            'status': 'success',
-            'message': "User liked post {}".format(post_id),
-        }
-        return response_object, 201
+    return like_content(user, post)
 
 
 def dislike_post_by_id(token, user_id, post_id):
@@ -100,23 +82,4 @@ def dislike_post_by_id(token, user_id, post_id):
         }
         return response_object, 401
 
-    if post == user.disliked_content.filter(Content.id == post_id).first():
-        user.disliked_content.remove(post)
-        db.session.commit()
-
-        response_object = {
-            'status': 'success',
-            'message': "User removed dislike from post {}".format(post_id),
-        }
-        return response_object, 201
-    else:
-        if post == user.liked_content.filter(Content.id == post_id).first():
-            user.liked_content.remove(post)
-        user.disliked_content.append(post)
-        db.session.commit()
-
-        response_object = {
-            'status': 'success',
-            'message': "User disliked post {}".format(post_id),
-        }
-        return response_object, 201
+    return dislike_content(user, post)
