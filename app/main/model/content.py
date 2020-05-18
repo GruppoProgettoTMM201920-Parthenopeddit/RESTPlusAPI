@@ -45,6 +45,10 @@ class Content(db.Model):
 
     # AGGREGATED COLUMNS
     @hybrid_property
+    def author_display_name(self):
+        return self.author.display_name
+
+    @hybrid_property
     def comments_num(self):
         sum = self.comments.count()
         if sum > 0:

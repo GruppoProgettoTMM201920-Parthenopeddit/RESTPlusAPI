@@ -1,9 +1,10 @@
 from flask import request
 from flask_restplus import Namespace, Resource
+
+from app.main.namespaces.models_definition import get_new_post_model, get_content_with_comments_model, \
+    ContentType, get_content_model
+from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id
 from app.main.util.auth_decorator import token_authenticated
-from app.main.namespaces.models_definition import get_post_model, get_new_post_model, get_content_with_comments_model, \
-    ContentType
-from app.main.namespaces.posts.post_services import save_new_post, get_post_by_id
 
 api = Namespace('Posts', description="User's post framework")
 
@@ -22,7 +23,7 @@ class Posts(Resource):
 @api.param('post_id', 'The Post identifier')
 class GetPost(Resource):
     @token_authenticated
-    @api.marshal_with(get_post_model(api))
+    @api.marshal_with(get_content_model(api, ContentType.POST))
     def get(self, token, user_id, post_id):
         """Get specific post"""
         return get_post_by_id(token, user_id, post_id)

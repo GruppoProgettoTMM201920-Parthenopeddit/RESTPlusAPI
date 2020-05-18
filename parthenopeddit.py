@@ -1,9 +1,11 @@
 import os
+
 from flask_migrate import Migrate
+
+import cli
 from app import blueprint
 from app.main import create_app, db
-from app.main.model import user, content, post, comment, review, likes, dislikes, board, course, group, is_member
-import cli
+from app.main.model import user, content, post, comment, review, board, course, group
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)

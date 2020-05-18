@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from sqlalchemy.ext.hybrid import hybrid_property
-
 from app.main import db
 from app.main.model.board import Board
 from app.main.model.dislikes import dislikes

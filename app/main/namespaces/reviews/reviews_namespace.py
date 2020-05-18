@@ -1,8 +1,8 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_new_review_model, get_review_model, get_content_with_comments_model, \
-    ContentType
+from app.main.namespaces.models_definition import get_new_review_model, get_content_with_comments_model, \
+    ContentType, get_content_model
 from app.main.namespaces.reviews.reviews_services import save_new_review, get_review_by_id
 from app.main.util.auth_decorator import token_authenticated
 
@@ -23,7 +23,7 @@ class Reviews(Resource):
 @api.param('review_id', 'The Review identifier')
 class GetReview(Resource):
     @token_authenticated
-    @api.marshal_with(get_review_model(api))
+    @api.marshal_with(get_content_model(api, ContentType.COMMENT))
     def get(self, token, user_id, review_id):
         """Get specific post"""
         return get_review_by_id(token, user_id, review_id)

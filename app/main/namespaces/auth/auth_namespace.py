@@ -1,4 +1,5 @@
 from flask_restplus import Resource, Namespace
+
 from app.main.namespaces.auth.auth_services import login
 from app.main.util.auth_decorator import token_required
 

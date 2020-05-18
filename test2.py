@@ -1,17 +1,5 @@
-from sqlalchemy import text
-
-from parthenopeddit import app
-from app.main import db
-from app.main.model.user import User
-from app.main.model.content import Content
-from app.main.model.comment import Comment
-from app.main.model.post import Post
-from app.main.model.review import Review
-from app.main.model.likes import likes
-from app.main.model.dislikes import dislikes
 from app.main.model.board import Board
-from app.main.model.group import Group
-from app.main.model.course import Course
+from app.main.model.user import User
 
 if __name__ == '__main__':
     u1 = User.query.filter_by(id="user1").first_or_404()

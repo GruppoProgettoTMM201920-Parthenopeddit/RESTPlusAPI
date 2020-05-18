@@ -4,8 +4,8 @@ import unittest
 from flask import current_app
 from flask_testing import TestCase
 
-from parthenopeddit import app
 from app.main.config import basedir
+from parthenopeddit import app
 
 
 class TestDevelopmentConfig(TestCase):

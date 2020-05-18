@@ -9,25 +9,30 @@ user_mapping = {
     'display_name': fields.String(description='Displayed name'),
     'registered_on': fields.DateTime(description='Date and time of first login'),
 }
+
 content_mapping = {
     'id': fields.Integer(description='Content id'),
     'body': fields.String(description='Message body of the content'),
     'timestamp': fields.DateTime(description='Date and time of publication'),
     'author_id': fields.String(description='User id of the author'),
+    'author_display_name': fields.String(description='Displayed name of the author'),
     'comments_num': fields.Integer(description='number of comments received'),
     'likes_num': fields.Integer(description='number of likes received'),
     'dislikes_num': fields.Integer(description='number of dislikes received'),
     'type': fields.String(description='Content type (Post, Comment, Review)'),
 }
+
 post_fields_mapping = {
     'title': fields.String(description='Title of the post'),
     'posted_to_board_id': fields.Integer(description='Board id this post has been published to'),
 }
 post_mapping = dict(content_mapping, **post_fields_mapping)
+
 comment_fields_mapping = {
     'commented_content_id': fields.Integer(description='Id of commented content'),
 }
 comment_mapping = dict(content_mapping, **comment_fields_mapping)
+
 review_fields_mapping = {
     'reviewed_course_id': fields.Integer(description='id of reviewed course'),
     'score_liking': fields.Integer(description='0 to 5 score of liking for the reviewed course'),
@@ -58,9 +63,6 @@ page_selection_mapping = {
 
 
 class ContentType(Enum):
-    # POST = {'map': post_mapping, 'label': 'post_{}'}
-    # REVIEW = {'map': review_mapping, 'label': 'comment_{}'}
-    # COMMENT = {'map': comment_mapping, 'label': 'review_{}'}
     POST = 'post'
     REVIEW = 'review'
     COMMENT = 'comment'
@@ -75,27 +77,15 @@ class ContentType(Enum):
 
     def getLabel(self):
         switcher = {
-            self.POST: 'post_{}',
-            self.REVIEW: 'review_{}',
-            self.COMMENT: 'comment_{}',
+            self.POST: 'post',
+            self.REVIEW: 'review',
+            self.COMMENT: 'comment',
         }
         return switcher.get(self)
 
 
 def get_user_model(api):
     return api.model('user', user_mapping)
-
-
-def get_post_model(api):
-    return api.model('post', post_mapping)
-
-
-def get_comment_model(api):
-    return api.model('comment', comment_mapping)
-
-
-def get_review_model(api):
-    return api.model('review', review_mapping)
 
 
 def get_new_post_model(api):
@@ -110,6 +100,12 @@ def get_new_review_model(api):
     return api.model('new review', new_review_mapping)
 
 
+def get_content_model(api, content_type):
+    content_model = content_type.getMap().copy()
+    content_model['author'] = fields.Nested(get_user_model(api))
+    return api.model(content_type.getLabel(), content_model)
+
+
 def __get_recursive_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH-1):
     comments_mapping = ContentType.COMMENT.getMap().copy()
     if recursive_steps:
@@ -118,18 +114,20 @@ def __get_recursive_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH
                 __get_recursive_comments_model(api, recursive_steps - 1)
             )
         )
-    return api.model(ContentType.COMMENT.getLabel().format(recursive_steps), comments_mapping)
+    return api.model("content_comment_{}".format(recursive_steps), comments_mapping)
 
 
 def get_content_with_comments_model(api, content_type, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
     rec_content_mapping = content_type.getMap().copy()
+    rec_content_mapping['author'] = fields.Nested(get_user_model(api))
     if recursive_steps:
         rec_content_mapping['comments'] = fields.List(
             fields.Nested(
                 __get_recursive_comments_model(api, recursive_steps - 1)
             )
         )
-    return api.model(content_type.getLabel().format(recursive_steps), rec_content_mapping)
+    model_label = "{}_with_comments".format(content_type.getLabel())
+    return api.model(model_label, rec_content_mapping)
 
 
 def get_page_selection_model(api):

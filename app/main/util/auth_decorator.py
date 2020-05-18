@@ -1,4 +1,5 @@
 from functools import wraps
+
 from flask import request
 
 from app.main.util.UniparthenopeAPI.requests import token_is_valid
