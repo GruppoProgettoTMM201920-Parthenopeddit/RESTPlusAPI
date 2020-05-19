@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app.main import db
 
 

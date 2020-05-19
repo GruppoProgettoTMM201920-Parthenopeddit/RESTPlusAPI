@@ -1,5 +1,3 @@
-from sqlalchemy.orm import remote
-
 from app.main import db
 from app.main.model.chat import Chat
 

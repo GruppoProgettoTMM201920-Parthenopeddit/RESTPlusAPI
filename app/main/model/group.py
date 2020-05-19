@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from sqlalchemy.ext.hybrid import hybrid_property
+
 from .board import Board
 from .. import db
 
