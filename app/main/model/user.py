@@ -1,9 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy.ext.hybrid import hybrid_property
-
 from app.main import db
-from app.main.model.board import Board
 from app.main.model.course import Course
 from app.main.model.dislikes import dislikes
 from app.main.model.follows import follows
@@ -51,24 +48,19 @@ class User(db.Model):
         back_populates='members',
         lazy='dynamic'
     )
-    sent_friendships = db.relationship(
-        'Friendship',
-        back_populates='sending_user',
-        lazy='dynamic',
-        foreign_keys='Friendship.sending_user_id'
-    )
-    received_friendships = db.relationship(
-        'Friendship',
-        back_populates='receiving_user',
-        lazy='dynamic',
-        foreign_keys='Friendship.receiving_user_id'
-    )
     sent_messages = db.relationship(
         'Message',
         back_populates='sender_user',
         lazy='dynamic'
     )
+    chats_with_users = db.relationship(
+        'UsersChat',
+        back_populates='of_user',
+        foreign_keys='UsersChat.of_user_id',
+        lazy='dynamic'
+    )
 
+    # QUERY
     def get_posts_feed(self):
         return Post.query.filter(
             Post.posted_to_board_id.in_(

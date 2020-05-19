@@ -1,9 +1,7 @@
 from app.main import db
 from app.main.model.board import Board
-from app.main.model.content import Content
-from app.main.model.group import Group
 from app.main.model.post import Post
-from app.main.model.user import User
+from app.main.namespaces.content_accessibility import is_post_accessible
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
 
 
@@ -36,22 +34,8 @@ def save_new_post(token, user_id, payload):
     return response_object, 200
 
 
-def __is_post_accessible(user_id, post_id):
-    post = Post.query.filter(Post.id == post_id).first_or_404()
-    user = User.query.filter(User.id == user_id).first_or_404()
-
-    if post.posted_to_board_id is not None:
-        board = post.posted_to_board
-        if board.type == 'group':
-            group = board
-            if group != user.joined_groups.filter(Group.id == group.id).first():
-                return False, None, None
-
-    return True, user, post
-
-
 def get_post_by_id(token, user_id, post_id):
-    accessible, user, post = __is_post_accessible(user_id, post_id)
+    accessible, user, post = is_post_accessible(user_id, post_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -63,7 +47,7 @@ def get_post_by_id(token, user_id, post_id):
 
 
 def like_post_by_id(token, user_id, post_id):
-    accessible, user, post = __is_post_accessible(user_id, post_id)
+    accessible, user, post = is_post_accessible(user_id, post_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -75,7 +59,7 @@ def like_post_by_id(token, user_id, post_id):
 
 
 def dislike_post_by_id(token, user_id, post_id):
-    accessible, user, post = __is_post_accessible(user_id, post_id)
+    accessible, user, post = is_post_accessible(user_id, post_id)
     if not accessible:
         response_object = {
             'status': 'error',

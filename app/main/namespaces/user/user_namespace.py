@@ -37,13 +37,6 @@ class UserFeed(Resource):
         """Fetch user posts feed"""
         return get_user_feed(token, user_id, per_page, page)
 
-
-# TODO get feed
-#   @api.route("/feed/", defaults={'per_page': 20, 'page': 1})
-#   @api.route("/<int:page>", endpoint="/")
-#   @api.param('user_id', 'ID of user to fetch')
-#   class UserData(Resource):
-
 # TODO search users
 
 

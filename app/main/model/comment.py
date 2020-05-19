@@ -10,6 +10,7 @@ class Comment(Content):
 
     # FOREIGN KEYS COLUMNS
     commented_content_id = db.Column(db.Integer, db.ForeignKey('content.id'), nullable=False)
+    root_content_id = db.Column(db.Integer, db.ForeignKey('content.id'), nullable=False)
 
     # RELATIONSHIPS
     commented_content = db.relationship(
@@ -17,6 +18,10 @@ class Comment(Content):
         back_populates='comments',
         lazy=True,
         foreign_keys='Comment.commented_content_id'
+    )
+    root_content = db.relationship(
+        'Content',
+        foreign_keys='Comment.root_content_id'
     )
 
     # INHERITANCE

@@ -24,7 +24,7 @@ class Group(Board):
         lazy='dynamic'
     )
     chat = db.relationship(
-        'Chat',
+        'GroupChat',
         back_populates='of_group'
     )
 

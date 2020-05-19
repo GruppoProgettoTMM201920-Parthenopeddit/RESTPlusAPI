@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 import cli
 from app import blueprint
 from app.main import create_app, db
-from app.main.model import user, content, post, comment, review, board, course, group, chat, friendship, message
+from app.main.model import user, content, post, comment, review, board, course, group, message, chat, group_chat, users_chat
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)
@@ -27,8 +27,9 @@ def make_shell_context():
         'Course': course,
         'Group': group,
         'Chat': chat,
-        'Friendship': friendship,
         'Message': message,
+        'GroupChat': group_chat,
+        'UsersChat': users_chat,
     }
 
 
