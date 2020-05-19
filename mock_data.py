@@ -2,6 +2,7 @@ from app.main import db
 from app.main.model.comment import Comment
 from app.main.model.course import Course
 from app.main.model.group import Group
+from app.main.model.group_member import GroupMember
 from app.main.model.post import Post
 from app.main.model.review import Review
 from app.main.model.user import User
@@ -55,8 +56,8 @@ def populate_db():
     group1 = Group(name="SCEMI_1")
     db.session.add(group1)
 
-    group1.members.append(user2)
-    group1.members.append(user3)
+    group1.members.append(GroupMember(user=user2, group=group1))
+    group1.members.append(GroupMember(user=user3, group=group1))
 
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))

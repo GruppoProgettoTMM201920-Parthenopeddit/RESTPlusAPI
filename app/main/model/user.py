@@ -5,7 +5,6 @@ from app.main.model.course import Course
 from app.main.model.dislikes import dislikes
 from app.main.model.follows import follows
 from app.main.model.group import Group
-from app.main.model.is_member import is_member
 from app.main.model.likes import likes
 from app.main.model.post import Post
 
@@ -42,11 +41,9 @@ class User(db.Model):
         back_populates='followers',
         lazy='dynamic'
     )
-    joined_groups = db.relationship(
-        'Group',
-        secondary=is_member,
-        back_populates='members',
-        lazy='dynamic'
+    groups = db.relationship(
+        'GroupMember',
+        back_populates='user'
     )
     sent_messages = db.relationship(
         'Message',

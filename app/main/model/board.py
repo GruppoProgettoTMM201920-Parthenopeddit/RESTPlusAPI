@@ -1,6 +1,4 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-
-from .is_member import is_member
 from .. import db
 
 

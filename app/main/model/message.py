@@ -28,5 +28,9 @@ class Message(db.Model):
         back_populates='received_messages',
         lazy=True
     )
+    replies_to_message = db.relationship(
+        'Message',
+        remote_side='[Message.id]'
+    )
 
     # TODO ADD SELF REFERENCING RELATIONSHIP AND HYBRID DATA TO OTHER CLASSES

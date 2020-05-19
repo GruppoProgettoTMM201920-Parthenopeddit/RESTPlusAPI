@@ -11,7 +11,7 @@ class UsersChat(Chat):
     id = db.Column(db.Integer, db.ForeignKey('chat.id'), primary_key=True, autoincrement=True)
     of_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     last_opened_on = db.Column(db.DateTime, nullable=True)
-    other_user_chat_id = db.Column(db.Integer, db.ForeignKey('users_chat.id'), nullable=False)
+    other_user_chat_id = db.Column(db.Integer, db.ForeignKey('users_chat.id'))
 
     # RELATIONSHIPS
     of_user = db.relationship(
@@ -22,7 +22,8 @@ class UsersChat(Chat):
     other_user_chat = db.relationship(
         'UsersChat',
         foreign_keys='UsersChat.other_user_chat_id',
-        remote_side='[UsersChat.id]'
+        remote_side='[UsersChat.id]',
+        post_update=True
     )
 
     # INHERITANCE

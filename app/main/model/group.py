@@ -1,11 +1,6 @@
 from datetime import datetime
-
 from sqlalchemy.ext.hybrid import hybrid_property
-
-
 from .board import Board
-
-from .is_member import is_member
 from .. import db
 
 
@@ -17,15 +12,19 @@ class Group(Board):
     created_on = db.Column(db.DateTime, default=datetime.utcnow())
 
     # RELATIONSHIPS
-    members = db.relationship(
-        'User',
-        secondary=is_member,
-        back_populates='joined_groups',
-        lazy='dynamic'
-    )
     chat = db.relationship(
         'GroupChat',
         back_populates='of_group'
+    )
+    members = db.relationship(
+        'GroupMember',
+        back_populates='group',
+        lazy='dynamic'
+    )
+    invites = db.relationship(
+        'GroupInvite',
+        back_populates='group',
+        lazy='dynamic'
     )
 
     # AGGREGATED COLUMNS
