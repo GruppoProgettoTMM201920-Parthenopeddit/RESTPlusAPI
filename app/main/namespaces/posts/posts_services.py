@@ -26,12 +26,7 @@ def save_new_post(token, user_id, payload):
     db.session.add(new_post)
     db.session.commit()
 
-    response_object = {
-        'status': 'success',
-        'message': 'Post published successfully',
-        'id': new_post.id
-    }
-    return response_object, 200
+    return new_post, 200
 
 
 def get_post_by_id(token, user_id, post_id):

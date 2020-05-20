@@ -13,6 +13,7 @@ api = Namespace('Posts', description="User's post framework")
 class Posts(Resource):
     @token_authenticated
     @api.expect(get_new_post_model(api), validate=True)
+    @api.marshal_with(get_content_model(api, ContentType.POST))
     def post(self, token, user_id):
         """Publish new post"""
         payload = request.json

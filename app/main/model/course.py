@@ -4,8 +4,8 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from .board import Board
-from .follows import follows
 from .review import Review
+from .user_follows_course import user_follows_course
 from .. import db
 
 
@@ -23,7 +23,7 @@ class Course(Board):
     )
     followers = db.relationship(
         'User',
-        secondary=follows,
+        secondary=user_follows_course,
         back_populates='followed_courses',
         lazy='dynamic'
     )

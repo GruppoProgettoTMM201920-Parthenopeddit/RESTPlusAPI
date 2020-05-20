@@ -3,10 +3,10 @@ from datetime import datetime, timezone
 from app.main import db
 from app.main.model.course import Course
 from app.main.model.dislikes import dislikes
-from app.main.model.follows import follows
 from app.main.model.group import Group
 from app.main.model.likes import likes
 from app.main.model.post import Post
+from app.main.model.user_follows_course import user_follows_course
 
 
 class User(db.Model):
@@ -37,7 +37,7 @@ class User(db.Model):
     )
     followed_courses = db.relationship(
         'Course',
-        secondary=follows,
+        secondary=user_follows_course,
         back_populates='followers',
         lazy='dynamic'
     )
