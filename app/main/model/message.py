@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.main import db
 
@@ -9,7 +9,7 @@ class Message(db.Model):
     # DATA COLUMNS
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.Text(), nullable=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
 
     replies_to_message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=True)
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -13,7 +13,7 @@ class Content(db.Model):
     # DATA COLUMNS
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.Text(), nullable=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
 
     # FOREIGN KEYS COLUMNS
     author_id = db.Column(db.String, db.ForeignKey('user.id'), nullable=False)

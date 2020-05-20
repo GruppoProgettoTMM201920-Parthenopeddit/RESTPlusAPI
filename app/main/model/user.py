@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.main import db
 from app.main.model.course import Course
@@ -15,7 +15,7 @@ class User(db.Model):
     # DATA COLUMNS
     id = db.Column(db.String, primary_key=True, autoincrement=False)
     display_name = db.Column(db.String(32), index=True, unique=True, nullable=True)
-    registered_on = db.Column(db.DateTime, default=datetime.utcnow())
+    registered_on = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # RELATIONSHIPS
     published_content = db.relationship(
