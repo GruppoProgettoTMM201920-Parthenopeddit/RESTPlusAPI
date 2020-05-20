@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +11,7 @@ db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 socketio = SocketIO()
 migrate = Migrate()
+cors = CORS()
 
 
 def create_app(config_name):
@@ -20,5 +22,6 @@ def create_app(config_name):
     flask_bcrypt.init_app(app)
     socketio.init_app(app)
     migrate.init_app(app, db)
+    cors.init_app(app)
 
     return app
