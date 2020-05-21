@@ -28,7 +28,7 @@ class Comments(Resource):
 @api.param('comment_id', 'The Comment identifier')
 class GetComment(Resource):
     @login_required
-    @api.marshal_with(get_content_model(api, ContentType.COMMENT))
+    @api.marshal_with(get_content_model(api, ContentType.COMMENT), code=200, description='Comment successfully retrieved')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(200, 'Comment successfully retrieved')
@@ -41,7 +41,7 @@ class GetComment(Resource):
 @api.param('comment_id', 'The Comment identifier')
 class GetCommentWithComments(Resource):
     @login_required
-    @api.marshal_with(get_content_with_comments_model(api, ContentType.COMMENT))
+    @api.marshal_with(get_content_with_comments_model(api, ContentType.COMMENT), code=200, description='Comment successfully retrieved')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(200, 'Comment successfully retrieved')

@@ -15,6 +15,9 @@ class Reviews(Resource):
     @login_required
     @api.expect(get_new_review_model(api), validate=True)
     @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=201, description='Review published successfully.')
+    @api.response(201, 'Review published successfully.')
+    @api.response(300, 'invalid reviewed_course_id supplied')
+    @api.response(404, 'Cant find course')
     def post(self, user):
         """Publish new review"""
         payload = request.json
@@ -25,7 +28,9 @@ class Reviews(Resource):
 @api.param('review_id', 'The Review identifier')
 class GetReview(Resource):
     @login_required
-    @api.marshal_with(get_content_model(api, ContentType.REVIEW))
+    @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=200, description='Review successfully retrieved')
+    @api.response(404, 'Cant find review')
+    @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
         """Get specific post"""
         return get_review_by_id(user, review_id)
@@ -35,7 +40,9 @@ class GetReview(Resource):
 @api.param('review_id', 'The Review identifier')
 class GetReviewWithComments(Resource):
     @login_required
-    @api.marshal_with(get_content_with_comments_model(api, ContentType.REVIEW))
+    @api.marshal_with(get_content_with_comments_model(api, ContentType.REVIEW), code=200, description='Review successfully retrieved')
+    @api.response(404, 'Cant find review')
+    @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
         """Get specific post, with comments"""
         return get_review_by_id(user, review_id)
@@ -45,6 +52,10 @@ class GetReviewWithComments(Resource):
 @api.param('review_id', 'The Review identifier')
 class LikePost(Resource):
     @login_required
+    @api.response(404, 'Cant find review')
+    @api.response(210, 'liked review')
+    @api.response(211, 'removed like from review')
+    @api.response(212, 'removed dislike and liked review')
     def post(self, user, review_id):
         """Express like to specific post"""
         return like_review_by_id(user, review_id)
@@ -54,6 +65,10 @@ class LikePost(Resource):
 @api.param('review_id', 'The Review identifier')
 class DislikePost(Resource):
     @login_required
+    @api.response(404, 'Cant find review')
+    @api.response(210, 'liked review')
+    @api.response(211, 'removed like from review')
+    @api.response(212, 'removed dislike and liked review')
     def post(self, user, review_id):
         """Express dislike to specific post"""
         return dislike_review_by_id(user, review_id)

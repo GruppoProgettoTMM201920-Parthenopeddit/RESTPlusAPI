@@ -28,7 +28,10 @@ class Posts(Resource):
 @api.param('post_id', 'The Post identifier')
 class GetPost(Resource):
     @login_required
-    @api.marshal_with(get_content_model(api, ContentType.POST))
+    @api.marshal_with(get_content_model(api, ContentType.POST), code=200, description='Post successfully retrieved')
+    @api.response(401, 'Post is private')
+    @api.response(404, 'Cant find post')
+    @api.response(200, 'Post successfully retrieved')
     def get(self, user, post_id):
         """Get specific post"""
         return get_post_by_id(user, post_id)
@@ -38,7 +41,10 @@ class GetPost(Resource):
 @api.param('post_id', 'The Post identifier')
 class GetPostWithComments(Resource):
     @login_required
-    @api.marshal_with(get_content_with_comments_model(api, ContentType.POST))
+    @api.marshal_with(get_content_with_comments_model(api, ContentType.POST), code=200, description='Post successfully retrieved')
+    @api.response(401, 'Post is private')
+    @api.response(404, 'Cant find post')
+    @api.response(200, 'Post successfully retrieved')
     def get(self, user, post_id):
         """Get specific post, with comments"""
         return get_post_by_id(user, post_id)
@@ -48,6 +54,11 @@ class GetPostWithComments(Resource):
 @api.param('post_id', 'The Post identifier')
 class LikePost(Resource):
     @login_required
+    @api.response(401, 'Post is private')
+    @api.response(404, 'Cant find post')
+    @api.response(210, 'liked post')
+    @api.response(211, 'removed like from post')
+    @api.response(212, 'removed dislike and liked post')
     def post(self, user, post_id):
         """Express like to specific post"""
         return like_post_by_id(user, post_id)
@@ -57,6 +68,11 @@ class LikePost(Resource):
 @api.param('post_id', 'The Post identifier')
 class DislikePost(Resource):
     @login_required
+    @api.response(401, 'Post is private')
+    @api.response(404, 'Cant find post')
+    @api.response(210, 'liked post')
+    @api.response(211, 'removed like from post')
+    @api.response(212, 'removed dislike and liked post')
     def post(self, user, post_id):
         """Express dislike to specific post"""
         return dislike_post_by_id(user, post_id)

@@ -10,7 +10,7 @@ def save_new_review(user, payload):
     if reviewed_course_id is None:
         response_object = {
             'status': 'error',
-            'message': 'no reviewed_course_id supplied',
+            'message': 'invalid reviewed_course_id supplied',
         }
         return response_object, 300
 
