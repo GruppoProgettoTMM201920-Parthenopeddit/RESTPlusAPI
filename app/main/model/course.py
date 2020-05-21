@@ -39,23 +39,21 @@ class Course(Board):
 
     @hybrid_property
     def average_difficulty_score(self):
-        return mean(rev.score_difficulty for rev in self.reviews)
-
-    @average_difficulty_score.expression
-    def average_difficulty_score(cls):
-        return select([func.avg(Review.score_difficulty)]). \
-            where(Review.reviewed_course_id == cls.id). \
-            label('average_difficulty_score')
+        return Review.query.with_entities(
+            func.avg(Review.score_difficulty)
+                .label('average_difficulty_score')
+        ).filter(
+            Review.reviewed_course_id == self.id
+        ).scalar()
 
     @hybrid_property
     def average_liking_score(self):
-        return mean(rev.score_liking for rev in self.reviews)
-
-    @average_liking_score.expression
-    def average_liking_score(cls):
-        return select([func.avg(Review.score_liking)]). \
-            where(Review.reviewed_course_id == cls.id). \
-            label('average_liking_score')
+        return Review.query.with_entities(
+            func.avg(Review.score_liking)
+                .label('average_liking_score')
+        ).filter(
+            Review.reviewed_course_id == self.id
+        ).scalar()
 
     # INHERITANCE
     __mapper_args__ = {
