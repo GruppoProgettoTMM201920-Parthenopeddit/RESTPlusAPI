@@ -2,7 +2,6 @@ from app.main.model.comment import Comment
 from app.main.model.content import Content
 from app.main.model.group import Group
 from app.main.model.post import Post
-from app.main.model.user import User
 
 
 def __is_post_accessible(user, post):
@@ -24,27 +23,23 @@ def __is_comment_accessible(user, comment):
     return True
 
 
-def is_comment_accessible(user_id, comment_id):
+def is_comment_accessible(user, comment_id):
     comment = Comment.query.filter(Comment.id == comment_id).first_or_404()
-    user = User.query.filter(User.id == user_id).first_or_404()
 
-    return __is_comment_accessible, user, comment
+    return __is_comment_accessible(user, comment), comment
 
 
-def is_post_accessible(user_id, post_id):
+def is_post_accessible(user, post_id):
     post = Post.query.filter(Post.id == post_id).first_or_404()
-    user = User.query.filter(User.id == user_id).first_or_404()
-
-    return __is_post_accessible(user, post), user, post
+    return __is_post_accessible(user, post), post
 
 
-def is_content_accessible(user_id, content_id):
+def is_content_accessible(user, content_id):
     content = Content.query.filter(Content.id == content_id).first_or_404()
-    user = User.query.filter(User.id == user_id).first_or_404()
 
     if content.type == 'post':
-        return __is_post_accessible(user, content), user, content
+        return __is_post_accessible(user, content), content
+    elif content.type == 'comment':
+        return __is_comment_accessible(user, content), content
     else:
-        if content.type == 'comment':
-            return __is_comment_accessible(user, content), user, content
-    return True, user, content
+        return True, content

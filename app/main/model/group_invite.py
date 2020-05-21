@@ -4,6 +4,8 @@ from app.main import db
 
 
 class GroupInvite(db.Model):
+    __tablename__ = 'group_invite'
+
     inviter_id = db.Column(db.String, db.ForeignKey('user.id'), primary_key=True)
     invited_id = db.Column(db.String, db.ForeignKey('user.id'), primary_key=True)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'), primary_key=True)

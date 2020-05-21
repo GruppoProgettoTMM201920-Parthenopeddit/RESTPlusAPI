@@ -2,7 +2,7 @@ from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.models_definition import get_complete_user_model, ContentType, get_content_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed
-from app.main.util.auth_decorator import token_authenticated
+from app.main.util.auth_decorator import login_required
 
 api = Namespace('User', description="User's specific actions framework")
 
@@ -18,11 +18,11 @@ api = Namespace('User', description="User's specific actions framework")
 @api.route("/<string:fetched_user_id>", endpoint="/")
 @api.param('fetched_user_id', 'ID of user to fetch')
 class UserData(Resource):
-    @token_authenticated
+    @login_required
     @api.marshal_with(get_complete_user_model(api))
-    def get(self, token, user_id, fetched_user_id):
+    def get(self, user, fetched_user_id):
         """Fetch user data"""
-        return get_user_data(token, user_id, fetched_user_id)
+        return get_user_data(user, fetched_user_id)
 
 
 @api.route("/feed/", defaults={'per_page': 20, 'page': 1})
@@ -31,10 +31,10 @@ class UserData(Resource):
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many posts per page')
 class UserFeed(Resource):
-    @token_authenticated
+    @login_required
     @api.marshal_list_with(get_content_model(api, ContentType.POST))
-    def get(self, token, user_id, per_page, page):
+    def get(self, user, per_page, page):
         """Fetch user posts feed"""
-        return get_user_feed(token, user_id, per_page, page)
+        return get_user_feed(user, per_page, page)
 
 # TODO search users
