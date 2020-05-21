@@ -14,7 +14,7 @@ def token_required(f):
             return {
                 'status': 'error',
                 'message': 'Authorization token missing'
-            }, 401
+            }, 451
 
         auth = request.headers['authorization']
         token = auth.split()[1]
@@ -32,7 +32,7 @@ def login_required(f):
             return {
                 'status': 'error',
                 'message': 'Authorization token missing'
-            }, 401
+            }, 451
 
         auth = request.headers['authorization']
         token = auth.split()[1]
@@ -41,7 +41,7 @@ def login_required(f):
             return {
                 'status': 'error',
                 'message': 'Invalid token'
-            }, 401
+            }, 452
 
         user_id = token_decode_username(token)
         user = User.query.filter(User.id == user_id).first()
@@ -50,7 +50,7 @@ def login_required(f):
             return {
                 'status': 'error',
                 'message': 'Login required'
-            }, 401
+            }, 453
 
         return f(*args, **kwargs, user=user)
     return decorated

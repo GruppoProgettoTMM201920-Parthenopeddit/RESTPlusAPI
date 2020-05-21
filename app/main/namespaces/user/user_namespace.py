@@ -20,6 +20,9 @@ api = Namespace('User', description="User's specific actions framework")
 class UserData(Resource):
     @login_required
     @api.marshal_with(get_complete_user_model(api))
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     def get(self, user, fetched_user_id):
         """Fetch user data"""
         return get_user_data(user, fetched_user_id)
@@ -33,6 +36,9 @@ class UserData(Resource):
 class UserFeed(Resource):
     @login_required
     @api.marshal_list_with(get_content_model(api, ContentType.POST))
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     def get(self, user, per_page, page):
         """Fetch user posts feed"""
         return get_user_feed(user, per_page, page)

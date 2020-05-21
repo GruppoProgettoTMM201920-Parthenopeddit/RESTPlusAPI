@@ -20,4 +20,4 @@ def login(token, user_id):
             'status': 'error',
             'message': error if error else 'Unknown error'
         }
-        return response_object, 401
+        return response_object, 452

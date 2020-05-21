@@ -14,6 +14,9 @@ class Posts(Resource):
     @login_required
     @api.expect(get_new_post_model(api), validate=True)
     @api.marshal_with(get_content_model(api, ContentType.POST), code=201, description='Post published successfully.')
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     @api.response(201, 'Post published successfully.')
     @api.response(300, 'invalid board_id supplied')
     @api.response(401, 'Cant post to private group')
@@ -29,6 +32,9 @@ class Posts(Resource):
 class GetPost(Resource):
     @login_required
     @api.marshal_with(get_content_model(api, ContentType.POST), code=200, description='Post successfully retrieved')
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     @api.response(401, 'Post is private')
     @api.response(404, 'Cant find post')
     @api.response(200, 'Post successfully retrieved')
@@ -42,6 +48,9 @@ class GetPost(Resource):
 class GetPostWithComments(Resource):
     @login_required
     @api.marshal_with(get_content_with_comments_model(api, ContentType.POST), code=200, description='Post successfully retrieved')
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     @api.response(401, 'Post is private')
     @api.response(404, 'Cant find post')
     @api.response(200, 'Post successfully retrieved')
@@ -54,6 +63,9 @@ class GetPostWithComments(Resource):
 @api.param('post_id', 'The Post identifier')
 class LikePost(Resource):
     @login_required
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     @api.response(401, 'Post is private')
     @api.response(404, 'Cant find post')
     @api.response(210, 'liked post')
@@ -68,6 +80,9 @@ class LikePost(Resource):
 @api.param('post_id', 'The Post identifier')
 class DislikePost(Resource):
     @login_required
+    @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
+    @api.response(453, 'Login required')
     @api.response(401, 'Post is private')
     @api.response(404, 'Cant find post')
     @api.response(210, 'liked post')
