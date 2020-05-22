@@ -10,6 +10,7 @@ class GroupMember(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'), primary_key=True)
     join_date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     last_chat_read = db.Column(db.DateTime, nullable=True)
+    is_owner = db.Column(db.Boolean, nullable=False)
 
     user = db.relationship(
         'User',

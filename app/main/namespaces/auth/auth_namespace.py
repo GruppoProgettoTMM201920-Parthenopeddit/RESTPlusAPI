@@ -13,6 +13,7 @@ class UserLogin(Resource):
     @api.response(200, 'User successfully logged.')
     @api.response(201, 'User first log on platform, created db entry.')
     @api.response(451, 'Authorization token missing')
+    @api.response(452, 'Invalid credentials')
     @api.marshal_with(get_complete_user_model(api))
     @token_required
     def get(self, token, user_id):
