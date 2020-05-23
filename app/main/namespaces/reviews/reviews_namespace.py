@@ -12,12 +12,9 @@ api = Namespace('Reviews', description="User's reviews framework")
 
 @api.route("/")
 class Reviews(Resource):
-    @login_required
+    @login_required(api)
     @api.expect(get_new_review_model(api), validate=True)
     @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=201, description='Review published successfully.')
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     @api.response(201, 'Review published successfully.')
     @api.response(300, 'invalid reviewed_course_id supplied')
     @api.response(404, 'Cant find course')
@@ -30,11 +27,8 @@ class Reviews(Resource):
 @api.route('/<int:review_id>')
 @api.param('review_id', 'The Review identifier')
 class GetReview(Resource):
-    @login_required
+    @login_required(api)
     @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=200, description='Review successfully retrieved')
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     @api.response(404, 'Cant find review')
     @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
@@ -45,11 +39,8 @@ class GetReview(Resource):
 @api.route('/<int:review_id>/comments')
 @api.param('review_id', 'The Review identifier')
 class GetReviewWithComments(Resource):
-    @login_required
+    @login_required(api)
     @api.marshal_with(get_content_with_comments_model(api, ContentType.REVIEW), code=200, description='Review successfully retrieved')
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     @api.response(404, 'Cant find review')
     @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
@@ -60,10 +51,7 @@ class GetReviewWithComments(Resource):
 @api.route('/<int:review_id>/like')
 @api.param('review_id', 'The Review identifier')
 class LikePost(Resource):
-    @login_required
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
+    @login_required(api)
     @api.response(404, 'Cant find review')
     @api.response(210, 'liked review')
     @api.response(211, 'removed like from review')
@@ -76,10 +64,7 @@ class LikePost(Resource):
 @api.route('/<int:review_id>/dislike')
 @api.param('review_id', 'The Review identifier')
 class DislikePost(Resource):
-    @login_required
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
+    @login_required(api)
     @api.response(404, 'Cant find review')
     @api.response(210, 'liked review')
     @api.response(211, 'removed like from review')

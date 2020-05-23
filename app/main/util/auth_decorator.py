@@ -25,35 +25,49 @@ def token_required(f):
     return decorated
 
 
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if 'authorization' not in request.headers:
-            return {
-                'status': 'error',
-                'message': 'Authorization token missing'
-            }, 451
+def login_required(api=None):
+    def wrapper_func(f):
+        def check_login(*args, **kwargs):
+            if 'authorization' not in request.headers:
+                return {
+                           'status': 'error',
+                           'message': 'Authorization token missing'
+                       }, 451
+            auth = request.headers['authorization']
+            token = auth.split()[1]
+            if not token_is_valid(token):
+                return {
+                           'status': 'error',
+                           'message': 'Invalid token'
+                       }, 452
+            user_id = token_decode_username(token)
+            user = User.query.filter(User.id == user_id).first()
+            if not user:
+                return {
+                           'status': 'error',
+                           'message': 'Login required'
+                       }, 453
+            return user
 
-        auth = request.headers['authorization']
-        token = auth.split()[1]
+        if api:
+            @api.response(451, 'Authorization token missing')
+            @api.response(452, 'Invalid credentials')
+            @api.response(453, 'Login required')
+            @wraps(f)
+            def decorated(*args, **kwargs):
+                user = check_login(*args, **kwargs)
+                return f(*args, **kwargs, user=user)
 
-        if not token_is_valid(token):
-            return {
-                'status': 'error',
-                'message': 'Invalid token'
-            }, 452
+            return decorated
+        else:
+            @wraps(f)
+            def undecorated(*args, **kwargs):
+                user = check_login(*args, **kwargs)
+                return f(*args, **kwargs, user=user)
 
-        user_id = token_decode_username(token)
-        user = User.query.filter(User.id == user_id).first()
+            return undecorated
 
-        if not user:
-            return {
-                'status': 'error',
-                'message': 'Login required'
-            }, 453
-
-        return f(*args, **kwargs, user=user)
-    return decorated
+    return wrapper_func
 
 
 

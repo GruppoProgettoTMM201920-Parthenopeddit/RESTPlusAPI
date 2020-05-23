@@ -12,12 +12,9 @@ api = Namespace('Comments', description="User's comments framework")
 
 @api.route("/")
 class Comments(Resource):
-    @login_required
+    @login_required(api)
     @api.expect(get_new_comment_model(api), validate=True)
     @api.marshal_with(get_content_model(api, ContentType.COMMENT), code=201, description='Comment published successfully.')
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     @api.response(201, 'Comment published successfully.')
     @api.response(300, 'Invalid payload. content_id needed.')
     @api.response(401, 'Commented post is private')
@@ -31,11 +28,8 @@ class Comments(Resource):
 @api.route('/<int:comment_id>')
 @api.param('comment_id', 'The Comment identifier')
 class GetComment(Resource):
-    @login_required
+    @login_required(api)
     @api.marshal_with(get_content_model(api, ContentType.COMMENT), code=200, description='Comment successfully retrieved')
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(200, 'Comment successfully retrieved')
@@ -47,11 +41,8 @@ class GetComment(Resource):
 @api.route('/<int:comment_id>/comments')
 @api.param('comment_id', 'The Comment identifier')
 class GetCommentWithComments(Resource):
-    @login_required
+    @login_required(api)
     @api.marshal_with(get_content_with_comments_model(api, ContentType.COMMENT), code=200, description='Comment successfully retrieved')
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(200, 'Comment successfully retrieved')
@@ -63,10 +54,7 @@ class GetCommentWithComments(Resource):
 @api.route('/<int:comment_id>/like')
 @api.param('comment_id', 'The Comment identifier')
 class LikePost(Resource):
-    @login_required
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
+    @login_required(api)
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(210, 'liked comment')
@@ -80,10 +68,7 @@ class LikePost(Resource):
 @api.route('/<int:comment_id>/dislike')
 @api.param('comment_id', 'The Comment identifier')
 class DislikePost(Resource):
-    @login_required
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
+    @login_required(api)
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(210, 'disliked comment')

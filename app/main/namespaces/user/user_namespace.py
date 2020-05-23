@@ -18,11 +18,8 @@ api = Namespace('User', description="User's specific actions framework")
 @api.route("/<string:fetched_user_id>", endpoint="/")
 @api.param('fetched_user_id', 'ID of user to fetch')
 class UserData(Resource):
-    @login_required
+    @login_required(api)
     @api.marshal_with(get_complete_user_model(api))
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     def get(self, user, fetched_user_id):
         """Fetch user data"""
         return get_user_data(user, fetched_user_id)
@@ -34,11 +31,8 @@ class UserData(Resource):
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many posts per page')
 class UserFeed(Resource):
-    @login_required
+    @login_required(api)
     @api.marshal_list_with(get_content_model(api, ContentType.POST))
-    @api.response(451, 'Authorization token missing')
-    @api.response(452, 'Invalid credentials')
-    @api.response(453, 'Login required')
     def get(self, user, per_page, page):
         """Fetch user posts feed"""
         return get_user_feed(user, per_page, page)

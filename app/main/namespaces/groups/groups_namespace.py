@@ -8,7 +8,7 @@ api = Namespace('Groups', description="Users ad-hoc Groups framework")
 
 @api.route("/")
 class Groups(Resource):
-    @login_required
+    @login_required(api)
     def get(self, user):
         """Get user joined groups"""
         return get_user_groups(user)
@@ -77,7 +77,7 @@ class GroupMembers(Resource):
 @api.param('group_id', 'The Group identifier')
 class GroupsMembersMakeOnwer(Resource):
     @login_required
-    def post(self, user, group_id, other_user):
+    def post(self, user, group_id):
         """Make a group member an owner"""
         # TODO
         #   GET promoted_user_id in payload
@@ -94,7 +94,7 @@ class GroupMessages(Resource):
         return get_group_messages(user, group_id)
 
     @login_required
-    def post(self, user):
+    def post(self, user, group_id):
         """Send a message to the group-chat"""
         # TODO
         #   GET message from payload
@@ -111,7 +111,7 @@ class GroupPosts(Resource):
         return get_group_posts(user, group_id)
 
     @login_required
-    def post(self, user):
+    def post(self, user, group_id):
         """Publish a post to the group's board"""
         # TODO
         #   GET post from payload
