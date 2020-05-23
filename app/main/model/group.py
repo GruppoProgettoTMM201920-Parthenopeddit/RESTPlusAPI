@@ -16,7 +16,8 @@ class Group(Board):
     # RELATIONSHIPS
     chat = db.relationship(
         'GroupChat',
-        back_populates='of_group'
+        back_populates='of_group',
+        uselist=False
     )
     members = db.relationship(
         'GroupMember',

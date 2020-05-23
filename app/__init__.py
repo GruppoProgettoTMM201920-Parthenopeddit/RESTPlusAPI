@@ -6,6 +6,7 @@ from app.main.namespaces.comments.comments_namespace import api as comments_name
 from app.main.namespaces.posts.posts_namespace import api as post_namespace
 from app.main.namespaces.reviews.reviews_namespace import api as reviews_namespace
 from app.main.namespaces.user.user_namespace import api as user_namespace
+from app.main.namespaces.groups.groups_namespace import api as groups_namespace
 
 blueprint = Blueprint('api', __name__)
 authorizations = {
@@ -24,8 +25,9 @@ api = Api(
     security='BasicLogin'
 )
 
-api.add_namespace(user_namespace, path='/user')
 api.add_namespace(auth_namespace, path='/auth')
+api.add_namespace(user_namespace, path='/user')
 api.add_namespace(post_namespace, path='/posts')
 api.add_namespace(comments_namespace, path='/comments')
 api.add_namespace(reviews_namespace, path='/reviews')
+api.add_namespace(groups_namespace, path='/groups')

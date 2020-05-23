@@ -9,6 +9,7 @@ from app.main.util.auth_decorator import login_required
 
 api = Namespace('Comments', description="User's comments framework")
 
+
 @api.route("/")
 class Comments(Resource):
     @login_required

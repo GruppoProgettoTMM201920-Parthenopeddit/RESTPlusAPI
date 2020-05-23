@@ -60,11 +60,11 @@ def populate_db():
     review2 = Review(author=user3, reviewed_course=course1, body="Troppo difficile", score_liking=2, score_difficulty=5)
     db.session.add(review2)
 
-    group1 = Group(name="SCEMI_1")
+    group1 = Group(name="SCEMI_1", chat=GroupChat())
     db.session.add(group1)
 
-    group1.members.append(GroupMember(user=user2, group=group1))
-    group1.members.append(GroupMember(user=user3, group=group1))
+    group1.members.append(GroupMember(user=user2, group=group1, is_owner=True))
+    group1.members.append(GroupMember(user=user3, group=group1, is_owner=False))
 
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
