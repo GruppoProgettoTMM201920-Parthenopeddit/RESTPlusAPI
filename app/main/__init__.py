@@ -20,7 +20,7 @@ def create_app(config_name):
 
     db.init_app(app)
     flask_bcrypt.init_app(app)
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
     migrate.init_app(app, db)
     cors.init_app(app)
 

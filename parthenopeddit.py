@@ -1,5 +1,8 @@
 import os
 
+from flask import render_template
+from flask_socketio import send
+
 import cli
 from app import blueprint
 from app.main import create_app, db, socketio
@@ -27,11 +30,33 @@ app.app_context().push()
 cli.register(app)
 
 
+@app.route("/javascript/socketio")
+def js_socketio():
+    return app.send_static_file("javascript/socketio.js")
+
+
+@app.route("/javascript/jquery")
+def js_query():
+    return app.send_static_file("javascript/jquery.js")
+
+
+
 @app.shell_context_processor
 def make_shell_context():
     return {
         'db': db
     }
+
+
+@socketio.on('message')
+def handleMessage(msg):
+    print('Message: ' + msg)
+    send(msg, broadcast=True)
+
+
+@app.route('/chatapp')
+def chatapp():
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

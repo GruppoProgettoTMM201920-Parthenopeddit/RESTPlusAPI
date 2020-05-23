@@ -7,7 +7,7 @@ from app.main.namespaces.like_dislike_framework import like_content, dislike_con
 
 def save_new_post(user, payload):
     board_id = payload['board_id']
-    if board_id is not None:
+    if board_id is not None and board_id != 0:
         board = Board.query.filter(Board.id == board_id).first_or_404()
         if not board:
             response_object = {
@@ -36,7 +36,7 @@ def save_new_post(user, payload):
     db.session.add(new_post)
     db.session.commit()
 
-    return new_post, 200
+    return new_post, 201
 
 
 def get_post_by_id(user, post_id):

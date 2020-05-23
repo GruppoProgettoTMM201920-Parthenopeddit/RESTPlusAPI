@@ -61,7 +61,7 @@ class User(db.Model):
     def get_posts_feed(self):
         return Post.query.filter(
             Post.posted_to_board_id.in_(
-                self.joined_groups.with_entities(Group.id).union(
+                self.groups.with_entities(Group.id).union(
                     self.followed_courses.with_entities(Course.id)
                 )
             )
