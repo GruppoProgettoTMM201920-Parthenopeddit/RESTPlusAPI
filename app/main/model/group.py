@@ -2,8 +2,8 @@ from datetime import datetime, timezone
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from .board import Board
-from .. import db
+from app.main.model.board import Board
+from app.main import db
 
 
 class Group(Board):

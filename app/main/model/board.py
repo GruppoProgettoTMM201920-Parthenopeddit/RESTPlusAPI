@@ -1,6 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from .. import db
+from app.main import db
 
 
 class Board(db.Model):

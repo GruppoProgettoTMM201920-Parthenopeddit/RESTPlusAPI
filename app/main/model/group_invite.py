@@ -17,7 +17,8 @@ class GroupInvite(db.Model):
     )
     invited = db.relationship(
         'User',
-        foreign_keys='GroupInvite.invited_id'
+        foreign_keys='GroupInvite.invited_id',
+        back_populates='group_invites'
     )
     group = db.relationship(
         'Group',

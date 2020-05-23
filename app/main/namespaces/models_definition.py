@@ -64,6 +64,24 @@ page_selection_mapping = {
     'per_page': fields.Integer(),
 }
 
+board_mapping = {
+    'id': fields.Integer(description='ID of the board'),
+    'name': fields.String(description='Name descriptor'),
+}
+group_fields_mapping = {
+    'created_on': fields.DateTime(description='Date on which the group has been created'),
+}
+group_mapping = dict(board_mapping, **group_fields_mapping)
+group_member_mapping = {
+    'user_id': fields.String(description='Id of the member user'),
+    'group_id': fields.Integer(description='Id of the group user if member of'),
+    'join_date': fields.DateTime(description='Date on which the user joined the group'),
+    'last_chat_read': fields.DateTime(description='Date on which the user last opened the chat'),
+    'is_owner': fields.Boolean(description='Flag describing group ownership'),
+}
+new_group_mapping = {
+    'group_name': fields.String(required=True, description='Name descriptor')
+}
 
 class ContentType(Enum):
     POST = 'post'
@@ -92,7 +110,7 @@ def get_complete_user_model(api):
 
 
 def get_simple_user_model(api):
-    return api.model('user_simplified', simple_user_mapping)
+    return api.model('user (simplified)', simple_user_mapping)
 
 
 def get_new_post_model(api):
@@ -138,4 +156,30 @@ def get_content_with_comments_model(api, content_type, recursive_steps=COMMENTS_
 
 
 def get_page_selection_model(api):
-    return api.model('page selection model', page_selection_mapping)
+    return api.model('page selection', page_selection_mapping)
+
+
+def get_group_model(api):
+    return api.model('group', group_mapping)
+
+
+def get_user_group_model(api):
+    group_member_model = group_member_mapping.copy()
+    group_member_model['group'] = fields.Nested(get_group_model(api))
+    return api.model('user group', group_member_model)
+
+
+def get_new_group_model(api):
+    new_group_model = new_group_mapping.copy()
+    new_group_model['invited_members'] = fields.List(fields.String(description='id of invited user'))
+    return api.model('new group', new_group_model)
+
+
+def get_group_invite_model(api):
+    group_invite_model = {
+        'inviter': fields.Nested(get_simple_user_model(api)),
+        'invited': fields.Nested(get_simple_user_model(api)),
+        'group': fields.Nested(get_group_model(api)),
+        'timestamp': fields.DateTime,
+    }
+    return api.model('group invite', group_invite_model)

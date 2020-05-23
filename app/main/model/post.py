@@ -1,5 +1,5 @@
-from .content import Content
-from .. import db
+from app.main.model.content import Content
+from app.main import db
 
 
 class Post(Content):
