@@ -28,19 +28,22 @@ class Content(db.Model):
         'Comment',
         back_populates='commented_content',
         lazy='dynamic',
-        foreign_keys='Comment.commented_content_id'
+        foreign_keys='Comment.commented_content_id',
+        cascade="delete"
     )
     liked_by_users = db.relationship(
         'User',
         secondary=likes,
         back_populates='liked_content',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade="delete"
     )
     disliked_by_users = db.relationship(
         'User',
         secondary=dislikes,
         back_populates='disliked_content',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade="delete"
     )
 
     @hybrid_property

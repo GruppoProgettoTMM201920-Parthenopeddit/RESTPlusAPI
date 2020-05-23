@@ -12,7 +12,8 @@ class GroupChat(Chat):
     # RELATIONSHIPS
     of_group = db.relationship(
         'Group',
-        back_populates='chat'
+        back_populates='chat',
+        cascade="delete"
     )
 
     # INHERITANCE

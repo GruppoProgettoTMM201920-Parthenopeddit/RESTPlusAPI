@@ -11,7 +11,8 @@ class Chat(db.Model):
     received_messages = db.relationship(
         'Message',
         back_populates='receiver_chat',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade="delete"
     )
 
     # INHERITANCE

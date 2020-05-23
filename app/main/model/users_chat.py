@@ -21,7 +21,8 @@ class UsersChat(Chat):
         'UsersChat',
         foreign_keys='UsersChat.other_user_chat_id',
         remote_side='[UsersChat.id]',
-        post_update=True
+        post_update=True,
+        cascade="delete"
     )
 
     # INHERITANCE

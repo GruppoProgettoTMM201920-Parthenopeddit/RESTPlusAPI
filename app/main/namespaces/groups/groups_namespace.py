@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource, fields
 
 from app.main.util.auth_decorator import login_required
 from app.main.namespaces.groups.groups_services import get_user_groups, create_group, get_user_group_invites, \
-    get_group_by_id
+    get_group_by_id, leave_group
 from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, get_simple_user_model, \
     get_group_invite_model, get_group_model
 
@@ -50,7 +50,7 @@ class GroupByID(Resource):
 @api.route("/<int:group_id>/leave")
 @api.param('group_id', 'The Group identifier')
 class GroupLeave(Resource):
-    @login_required
+    @login_required(api)
     def post(self, user, group_id):
         """Leave a group"""
         return leave_group(user, group_id)

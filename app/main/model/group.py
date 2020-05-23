@@ -17,17 +17,20 @@ class Group(Board):
     chat = db.relationship(
         'GroupChat',
         back_populates='of_group',
-        uselist=False
+        uselist=False,
+        cascade="save-update, delete"
     )
     members = db.relationship(
         'GroupMember',
         back_populates='group',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade="delete"
     )
     invites = db.relationship(
         'GroupInvite',
         back_populates='group',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade="delete"
     )
 
     # AGGREGATED COLUMNS

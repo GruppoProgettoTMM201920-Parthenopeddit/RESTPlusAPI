@@ -14,7 +14,8 @@ class Board(db.Model):
     posts = db.relationship(
         'Post',
         back_populates='posted_to_board',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade="delete"
     )
 
     # AGGREGATED COLUMNS
