@@ -169,6 +169,13 @@ def get_user_group_model(api):
     return api.model('user group', group_member_model)
 
 
+def get_users_id_list(api):
+    users_id_list_model = {
+        'users_list': fields.List(fields.String(description='id of invited user'))
+    }
+    return api.model('users id list', users_id_list_model)
+
+
 def get_new_group_model(api):
     new_group_model = new_group_mapping.copy()
     new_group_model['invited_members'] = fields.List(fields.String(description='id of invited user'))
@@ -183,3 +190,7 @@ def get_group_invite_model(api):
         'timestamp': fields.DateTime,
     }
     return api.model('group invite', group_invite_model)
+
+
+def get_answer_model(api):
+    return api.model('answer', {'answer': fields.Boolean(description="yes or no")})

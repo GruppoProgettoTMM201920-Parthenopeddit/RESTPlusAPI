@@ -3,9 +3,9 @@ from flask_restplus import Namespace, Resource, fields
 
 from app.main.util.auth_decorator import login_required
 from app.main.namespaces.groups.groups_services import get_user_groups, create_group, get_user_group_invites, \
-    get_group_by_id, leave_group
+    get_group_by_id, leave_group, invite_member, answer_to_invite, get_group_invites, get_group_members, make_owner
 from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, get_simple_user_model, \
-    get_group_invite_model, get_group_model
+    get_group_invite_model, get_group_model, get_users_id_list, get_answer_model
 
 api = Namespace('Groups', description="Users ad-hoc Groups framework")
 
@@ -20,7 +20,7 @@ class Groups(Resource):
         return get_user_groups(user)
 
     @login_required(api)
-    @api.marshal_list_with(get_simple_user_model(api))
+    @api.marshal_list_with(get_group_invite_model(api))
     @api.expect(get_new_group_model(api), validate=True)
     def post(self, user):
         """Create new group"""
@@ -56,51 +56,58 @@ class GroupLeave(Resource):
         return leave_group(user, group_id)
 
 
-# @api.route("/<int:group_id>/invite")
-# @api.param('group_id', 'The Group identifier')
-# class GroupInvite(Resource):
-#     @login_required
-#     def post(self, user, group_id):
-#         """Invite user as group member"""
-#         # TODO
-#         #   GET invited_user_id in payload
-#         payload = request.json
-#         return invite_member(user, group_id, payload)
-#
-#
-# @api.route("/<int:group_id>/invite/answer")
-# @api.param('group_id', 'The Group identifier')
-# class GroupInviteAnswer(Resource):
-#     @login_required
-#     def post(self, user, group_id):
-#         """Accept or refuse a group invite"""
-#         # TODO
-#         #   GET answer in payload
-#         payload = request.json
-#         return answer_to_invite(user, group_id, payload)
-#
-#
-# @api.route("/<int:group_id>/members")
-# @api.param('group_id', 'The Group identifier')
-# class GroupMembers(Resource):
-#     @login_required
-#     def get(self, user, group_id):
-#         """Get group's members list"""
-#         return get_group_members(user, group_id)
-#
-#
-# @api.route("/<int:group_id>/members/make_owner")
-# @api.param('group_id', 'The Group identifier')
-# class GroupsMembersMakeOnwer(Resource):
-#     @login_required
-#     def post(self, user, group_id):
-#         """Make a group member an owner"""
-#         # TODO
-#         #   GET promoted_user_id in payload
-#         payload = request.json
-#         return make_owner(user, group_id, payload)
-#
-#
+@api.route("/<int:group_id>/invite")
+@api.param('group_id', 'The Group identifier')
+class GroupInvite(Resource):
+    @login_required(api)
+    @api.marshal_list_with(get_group_invite_model(api))
+    @api.expect(get_users_id_list(api))
+    def post(self, user, group_id):
+        """Invite user as group member"""
+        payload = request.json
+        return invite_member(user, group_id, payload)
+
+    @login_required(api)
+    @api.marshal_list_with(get_group_invite_model(api))
+    def get(self, user, group_id):
+        """Get group invites"""
+        return get_group_invites(user, group_id)
+
+
+@api.route("/<int:group_id>/invite/answer")
+@api.param('group_id', 'The Group identifier')
+class GroupInviteAnswer(Resource):
+    @login_required(api)
+    @api.marshal_with(get_user_group_model(api))
+    @api.expect(get_answer_model(api), validate=True)
+    def post(self, user, group_id):
+        """Accept or refuse a group invite"""
+        payload = request.json
+        return answer_to_invite(user, group_id, payload)
+
+
+@api.route("/<int:group_id>/members")
+@api.param('group_id', 'The Group identifier')
+class GroupMembers(Resource):
+    @login_required(api)
+    @api.marshal_list_with(get_user_group_model(api))
+    def get(self, user, group_id):
+        """Get group's members list"""
+        return get_group_members(user, group_id)
+
+
+@api.route("/<int:group_id>/members/make_owner")
+@api.param('group_id', 'The Group identifier')
+class GroupsMembersMakeOnwer(Resource):
+    @login_required(api)
+    @api.marshal_list_with(get_user_group_model(api))
+    @api.expect(get_users_id_list(api))
+    def post(self, user, group_id):
+        """Make a group member an owner"""
+        payload = request.json
+        return make_owner(user, group_id, payload)
+
+
 # @api.route("/<int:group_id>/messages")
 # @api.param('group_id', 'The Group identifier')
 # class GroupMessages(Resource):
