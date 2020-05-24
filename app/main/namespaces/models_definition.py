@@ -83,6 +83,17 @@ new_group_mapping = {
     'group_name': fields.String(required=True, description='Name descriptor')
 }
 
+message_mapping = {
+    'id': fields.Integer(description='Message identifier'),
+    'body': fields.String(description='text of the message'),
+    'timestamp': fields.DateTime(description='date and time message was sent on'),
+}
+
+new_message_mapping = {
+    'body': fields.String(description='text of the message'),
+    'receiver_chat_id': fields.Integer(),
+}
+
 class ContentType(Enum):
     POST = 'post'
     REVIEW = 'review'
@@ -133,6 +144,7 @@ def get_content_model(api, content_type):
 
 def __get_recursive_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH-1):
     comments_mapping = ContentType.COMMENT.getMap().copy()
+    comments_mapping['author'] = fields.Nested(get_simple_user_model(api))
     if recursive_steps:
         comments_mapping['comments'] = fields.List(
             fields.Nested(
@@ -194,3 +206,20 @@ def get_group_invite_model(api):
 
 def get_answer_model(api):
     return api.model('answer', {'answer': fields.Boolean(description="yes or no")})
+
+
+def __get_simple_message_model(api):
+    message_model = message_mapping.copy()
+    message_model['sender_user'] = fields.Nested(get_simple_user_model(api))
+    return api.model('replied_message', message_model)
+
+
+def get_message_model(api):
+    message_model = message_mapping.copy()
+    message_model['sender_user'] = fields.Nested(get_simple_user_model(api))
+    message_model['replies_to_message'] = fields.Nested(__get_simple_message_model(api))
+    return api.model('message', message_model)
+
+
+def get_new_message_model(api):
+    return api.model('new message', new_message_mapping)

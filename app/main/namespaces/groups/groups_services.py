@@ -4,8 +4,17 @@ from app.main.model.user import User
 from app.main.model.group_invite import GroupInvite
 from app.main.model.group_member import GroupMember
 from app.main.model.group_chat import GroupChat
-from app.main.namespaces.group_accessibility import get_group_accessibility
+from app.main.model.post import Post
+from app.main.model.message import Message
 
+
+def check_group_accessibility(user, group_id):
+    membership = user.groups.filter(Group.id == group_id).first()
+
+    if membership:
+        return True, membership.is_owner, membership.group
+    else:
+        return False, False, None
 
 def get_user_groups(user):
     return user.groups.all(), 200
@@ -44,26 +53,11 @@ def get_user_group_invites(user):
     return user.group_invites.all(), 200
 
 
-def get_group_by_id(user, group_id):
-    accessible, is_owner, group = get_group_accessibility(user, group_id)
-    if not accessible:
-        response_object = {
-            'status': 'error',
-            'message': 'Group is private',
-        }
-        return response_object, 401
+def get_group_by_id(group):
     return group, 200
 
 
-def leave_group(user, group_id):
-    accessible, is_owner, group = get_group_accessibility(user, group_id)
-    if not accessible:
-        response_object = {
-            'status': 'error',
-            'message': 'Group is private',
-        }
-        return response_object, 401
-
+def leave_group(user, group):
     GroupMember.query.filter(GroupMember.group_id == group.id, GroupMember.user_id == user.id).delete()
 
     if group.members.count() == 0:
@@ -97,22 +91,7 @@ def leave_group(user, group_id):
     return response_object, 201
 
 
-def invite_member(user, group_id, payload):
-    accessible, is_owner, group = get_group_accessibility(user, group_id)
-    if not accessible:
-        response_object = {
-            'status': 'error',
-            'message': 'Group is private',
-        }
-        return response_object, 401
-
-    if not is_owner(user, group):
-        response_object = {
-            'status': 'error',
-            'message': 'Cant invite members if not owner',
-        }
-        return response_object, 480
-
+def invite_member(user, group, payload):
     users_list = payload['users_list']
     # TODO
     #   SEND ALL GROUP INVITES IN WORKER THREAD
@@ -127,15 +106,7 @@ def invite_member(user, group_id, payload):
     return invites, 201
 
 
-def get_group_invites(user, group_id):
-    accessible, is_owner, group = get_group_accessibility(user, group_id)
-    if not accessible:
-        response_object = {
-            'status': 'error',
-            'message': 'Group is private',
-        }
-        return response_object, 401
-
+def get_group_invites(group):
     return group.invites.all(), 200
 
 
@@ -159,34 +130,11 @@ def answer_to_invite(user, group_id, payload):
         return response_object, 201
 
 
-def get_group_members(user, group_id):
-    accessible, is_owner, group = get_group_accessibility(user, group_id)
-    if not accessible:
-        response_object = {
-            'status': 'error',
-            'message': 'Group is private',
-        }
-        return response_object, 401
-
+def get_group_members(group):
     return group.members.all(), 200
 
 
-def make_owner(user, group_id, payload):
-    accessible, is_owner, group = get_group_accessibility(user, group_id)
-    if not accessible:
-        response_object = {
-            'status': 'error',
-            'message': 'Group is private',
-        }
-        return response_object, 401
-
-    if not is_owner(user, group):
-        response_object = {
-            'status': 'error',
-            'message': 'Cant invite members if not owner',
-        }
-        return response_object, 480
-
+def make_owner(group, payload):
     users_list = payload['users_list']
     # TODO
     #   MAKE USERS OWNER IN WORKER THREAD
@@ -198,6 +146,38 @@ def make_owner(user, group_id, payload):
     db.session.commit()
     return owners, 201
 
+
+def get_group_posts(group):
+    return group.posts.all(), 200
+
+
+def publish_post_to_group(user, group, payload):
+    title = payload['title']
+    body = payload['body']
+    new_post = Post(author=user, title=title, body=body, posted_to_board=group)
+
+    db.session.add(new_post)
+    db.session.commit()
+
+    return new_post, 200
+
+
+def get_group_messages(group):
+    return group.chat.received_messages.all(), 200
+
+
+def send_message(user, group, payload):
+    message_text = payload['body']
+    new_message = Message(sender_user=user, receiver_chat=group.chat, body=message_text)
+    try:
+        replies_to_message_id = payload['replies_to_message_id']
+        replies_to_message = group.chat.received_messages.filter(Message.id == replies_to_message_id).first_or_404()
+        new_message.replies_to_message = replies_to_message
+    except:
+        pass
+    db.session.add(new_message)
+    db.session.commit()
+    return new_message, 201
 
 # TODO
 #   MAKE THIS SUBSEQUENT CONCURRENT

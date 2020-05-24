@@ -25,9 +25,13 @@ def token_required(f):
     return decorated
 
 
-def login_required(api=None):
+def login_required(api):
     def wrapper_func(f):
-        def check_login(*args, **kwargs):
+        @api.response(451, 'Authorization token missing')
+        @api.response(452, 'Invalid credentials')
+        @api.response(453, 'Login required')
+        @wraps(f)
+        def decorated(*args, **kwargs):
             if 'authorization' not in request.headers:
                 return {
                            'status': 'error',
@@ -47,25 +51,9 @@ def login_required(api=None):
                            'status': 'error',
                            'message': 'Login required'
                        }, 453
-            return user
+            return f(*args, **kwargs, user=user)
 
-        if api:
-            @api.response(451, 'Authorization token missing')
-            @api.response(452, 'Invalid credentials')
-            @api.response(453, 'Login required')
-            @wraps(f)
-            def decorated(*args, **kwargs):
-                user = check_login(*args, **kwargs)
-                return f(*args, **kwargs, user=user)
-
-            return decorated
-        else:
-            @wraps(f)
-            def undecorated(*args, **kwargs):
-                user = check_login(*args, **kwargs)
-                return f(*args, **kwargs, user=user)
-
-            return undecorated
+        return decorated
 
     return wrapper_func
 
