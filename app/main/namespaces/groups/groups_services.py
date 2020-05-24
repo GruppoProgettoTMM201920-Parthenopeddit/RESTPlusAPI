@@ -4,7 +4,7 @@ from app.main.model.user import User
 from app.main.model.group_invite import GroupInvite
 from app.main.model.group_member import GroupMember
 from app.main.model.group_chat import GroupChat
-from app.main.namespaces.group_accessibility import get_user_group
+from app.main.namespaces.group_accessibility import get_group_accessibility
 
 
 def get_user_groups(user):
@@ -45,7 +45,7 @@ def get_user_group_invites(user):
 
 
 def get_group_by_id(user, group_id):
-    accessible, group = get_user_group(user, group_id)
+    accessible, is_owner, group = get_group_accessibility(user, group_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -56,7 +56,7 @@ def get_group_by_id(user, group_id):
 
 
 def leave_group(user, group_id):
-    accessible, group = get_user_group(user, group_id)
+    accessible, is_owner, group = get_group_accessibility(user, group_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -98,7 +98,7 @@ def leave_group(user, group_id):
 
 
 def invite_member(user, group_id, payload):
-    accessible, group = get_user_group(user, group_id)
+    accessible, is_owner, group = get_group_accessibility(user, group_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -106,7 +106,7 @@ def invite_member(user, group_id, payload):
         }
         return response_object, 401
 
-    if not __is_user_owner(user, group):
+    if not is_owner(user, group):
         response_object = {
             'status': 'error',
             'message': 'Cant invite members if not owner',
@@ -128,7 +128,7 @@ def invite_member(user, group_id, payload):
 
 
 def get_group_invites(user, group_id):
-    accessible, group = get_user_group(user, group_id)
+    accessible, is_owner, group = get_group_accessibility(user, group_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -137,20 +137,6 @@ def get_group_invites(user, group_id):
         return response_object, 401
 
     return group.invites.all(), 200
-
-
-def __send_group_invites(inviter_user, group, invited_users_id_list):
-    users = User.query.filter(User.id.in_(invited_users_id_list)).all()
-
-    invites = []
-    for invited_user in users:
-        invites.append(GroupInvite(inviter=inviter_user, invited=invited_user, group=group))
-
-    return invites
-
-
-def __is_user_owner(user, group):
-    return user.groups.filter(Group.id == group.id).first_or_404().is_owner
 
 
 def answer_to_invite(user, group_id, payload):
@@ -174,7 +160,7 @@ def answer_to_invite(user, group_id, payload):
 
 
 def get_group_members(user, group_id):
-    accessible, group = get_user_group(user, group_id)
+    accessible, is_owner, group = get_group_accessibility(user, group_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -186,7 +172,7 @@ def get_group_members(user, group_id):
 
 
 def make_owner(user, group_id, payload):
-    accessible, group = get_user_group(user, group_id)
+    accessible, is_owner, group = get_group_accessibility(user, group_id)
     if not accessible:
         response_object = {
             'status': 'error',
@@ -194,7 +180,7 @@ def make_owner(user, group_id, payload):
         }
         return response_object, 401
 
-    if not __is_user_owner(user, group):
+    if not is_owner(user, group):
         response_object = {
             'status': 'error',
             'message': 'Cant invite members if not owner',
@@ -213,6 +199,10 @@ def make_owner(user, group_id, payload):
     return owners, 201
 
 
+# TODO
+#   MAKE THIS SUBSEQUENT CONCURRENT
+
+
 def __make_owners(group, new_owners_id_list):
     members_to_make_owner = group.members.filter(GroupMember.is_owner == False, GroupMember.user_id.in_(new_owners_id_list)).all()
 
@@ -222,3 +212,13 @@ def __make_owners(group, new_owners_id_list):
         new_owners.append(member)
 
     return new_owners
+
+
+def __send_group_invites(inviter_user, group, invited_users_id_list):
+    users = User.query.filter(User.id.in_(invited_users_id_list)).all()
+
+    invites = []
+    for invited_user in users:
+        invites.append(GroupInvite(inviter=inviter_user, invited=invited_user, group=group))
+
+    return invites
