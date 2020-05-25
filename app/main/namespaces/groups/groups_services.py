@@ -8,14 +8,6 @@ from app.main.model.post import Post
 from app.main.model.message import Message
 
 
-def check_group_accessibility(user, group_id):
-    membership = user.groups.filter(Group.id == group_id).first()
-
-    if membership:
-        return True, membership.is_owner, membership.group
-    else:
-        return False, False, None
-
 def get_user_groups(user):
     return user.groups.all(), 200
 
@@ -159,7 +151,7 @@ def publish_post_to_group(user, group, payload):
     db.session.add(new_post)
     db.session.commit()
 
-    return new_post, 200
+    return new_post, 201
 
 
 def get_group_messages(group):

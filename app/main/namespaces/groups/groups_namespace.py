@@ -16,15 +16,17 @@ api = Namespace('Groups', description="Users ad-hoc Groups framework")
 @api.route("/")
 class Groups(Resource):
     @login_required(api)
-    @api.marshal_list_with(get_user_group_model(api))
+    @api.marshal_list_with(get_user_group_model(api), code=200, description="Successfully retrieved user groups")
     @api.response(200, "Successuflly retreived user groups")
     def get(self, user):
         """Get user joined groups"""
         return get_user_groups(user)
 
     @login_required(api)
-    @api.marshal_list_with(get_group_invite_model(api))
+    @api.marshal_list_with(get_group_invite_model(api), code=201, description='Successfully created group')
     @api.expect(get_new_group_model(api), validate=True)
+    @api.response(300, 'Invalid payload. group name needed.')
+    @api.response(201, 'Successfully created group')
     def post(self, user):
         """Create new group"""
         payload = request.json
@@ -34,7 +36,8 @@ class Groups(Resource):
 @api.route("/invites")
 class UserGroupInvites(Resource):
     @login_required(api)
-    @api.marshal_list_with(get_group_invite_model(api))
+    @api.marshal_list_with(get_group_invite_model(api), code=200, description='Successfully retrieved user invites to group')
+    @api.response(200, 'Successfully retreived user invites to group')
     def get(self, user):
         """Get user group invites"""
         return get_user_group_invites(user)
@@ -45,7 +48,8 @@ class UserGroupInvites(Resource):
 class GroupByID(Resource):
     @login_required(api)
     @require_group_membership(api)
-    @api.marshal_with(get_group_model(api))
+    @api.marshal_with(get_group_model(api), code=200, description='Successfully retrieved group')
+    @api.response(200, 'Successfully retrieved group')
     def get(self, group, **kwargs):
         """Get specific group info"""
         return get_group_by_id(group)
@@ -56,6 +60,9 @@ class GroupByID(Resource):
 class GroupLeave(Resource):
     @login_required(api)
     @require_group_membership(api)
+    @api.response(201, 'Successfully left group')
+    @api.response(202, 'Successfully left group. Group had no owner hence a new one was promoted')
+    @api.response(203, 'Successfully left group. Group was empty hence disbanded')
     def post(self, user, group, **kwargs):
         """Leave a group"""
         return leave_group(user, group)
@@ -66,7 +73,8 @@ class GroupLeave(Resource):
 class GroupInvite(Resource):
     @login_required(api)
     @require_group_ownership(api)
-    @api.marshal_list_with(get_group_invite_model(api))
+    @api.marshal_list_with(get_group_invite_model(api), code=201, description='Successfully invited user/s to group')
+    @api.response(201, 'Successfully invited user/s to group')
     @api.expect(get_users_id_list(api))
     def post(self, user, group, **kwargs):
         """Invite user as group member"""
@@ -75,7 +83,8 @@ class GroupInvite(Resource):
 
     @login_required(api)
     @require_group_membership(api)
-    @api.marshal_list_with(get_group_invite_model(api))
+    @api.marshal_list_with(get_group_invite_model(api), code=200, description="Successfully retrieved group'd invites")
+    @api.response(200, "Successfully retrieved group'd invites")
     def get(self, group, **kwargs):
         """Get group invites"""
         return get_group_invites(group)
@@ -85,8 +94,11 @@ class GroupInvite(Resource):
 @api.param('group_id', 'The Group identifier')
 class GroupInviteAnswer(Resource):
     @login_required(api)
-    @api.marshal_with(get_user_group_model(api))
+    @api.marshal_with(get_user_group_model(api), code=201, description='Successfully accepted invite to group')
     @api.expect(get_answer_model(api), validate=True)
+    @api.response(404, 'Group invite not found')
+    @api.response(201, 'Successfully accepted invite to group')
+    @api.response(202, 'Successfully declined invite')
     def post(self, user, group_id):
         """Accept or refuse a group invite"""
         payload = request.json
@@ -98,7 +110,8 @@ class GroupInviteAnswer(Resource):
 class GroupMembers(Resource):
     @login_required(api)
     @require_group_membership(api)
-    @api.marshal_list_with(get_user_group_model(api))
+    @api.marshal_list_with(get_user_group_model(api), code=200, description='Successfully retrieved group members info')
+    @api.response(200, 'Successfully retrieved group members info')
     def get(self, group, **kwargs):
         """Get group's members list"""
         return get_group_members(group)
@@ -109,7 +122,8 @@ class GroupMembers(Resource):
 class GroupsMembersMakeOnwer(Resource):
     @login_required(api)
     @require_group_ownership(api)
-    @api.marshal_list_with(get_user_group_model(api))
+    @api.marshal_list_with(get_user_group_model(api), code=200, description='Successfully promoted user/s to owner')
+    @api.response(200, 'Successfully promoted user/s to owner')
     @api.expect(get_users_id_list(api))
     def post(self, group, **kwargs):
         """Make a group member an owner"""
@@ -142,14 +156,14 @@ class GroupPosts(Resource):
 class GroupMessages(Resource):
     @login_required(api)
     @require_group_membership(api)
-    @api.marshal_list_with(get_message_model(api))
+    @api.marshal_list_with(get_message_model(api), code=200, description='Successfully retrieved messages')
     def get(self, group, **kwargs):
         """Get messages of the group-chat"""
         return get_group_messages(group)
 
     @login_required(api)
     @require_group_membership(api)
-    @api.marshal_with(get_message_model(api))
+    @api.marshal_with(get_message_model(api), code=201, description='Message published successfully.')
     @api.expect(get_new_message_model(api))
     def post(self, user, group, **kwargs):
         """Send a message to the group-chat"""

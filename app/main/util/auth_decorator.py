@@ -14,7 +14,7 @@ def token_required(f):
             return {
                 'status': 'error',
                 'message': 'Authorization token missing'
-            }, 451
+            }, 455
 
         auth = request.headers['authorization']
         token = auth.split()[1]
@@ -27,9 +27,9 @@ def token_required(f):
 
 def login_required(api):
     def wrapper_func(f):
-        @api.response(451, 'Authorization token missing')
-        @api.response(452, 'Invalid credentials')
-        @api.response(453, 'Login required')
+        @api.response(455, 'Authorization token missing')
+        @api.response(456, 'Invalid credentials')
+        @api.response(457, 'Login required')
         @wraps(f)
         def decorated(*args, **kwargs):
             if 'authorization' not in request.headers:

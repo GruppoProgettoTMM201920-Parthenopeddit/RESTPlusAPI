@@ -14,6 +14,7 @@ def check_group_accessibility(user, group_id):
 
 def require_group_membership(api):
     def wrapper_func(f):
+        @api.response(404, 'Group not found')
         @api.response(461, 'Group is private')
         @wraps(f)
         def decorated(*args, user, group_id, **kwargs):
@@ -32,6 +33,7 @@ def require_group_membership(api):
 
 def require_group_ownership(api):
     def wrapper_func(f):
+        @api.response(404, 'Group not found')
         @api.response(461, 'Group is private')
         @api.response(462, 'Required group ownership')
         @wraps(f)
