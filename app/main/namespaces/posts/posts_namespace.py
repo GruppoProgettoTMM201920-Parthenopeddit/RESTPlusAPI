@@ -12,7 +12,7 @@ api = Namespace('Posts', description="User's post framework")
 @api.route("/")
 class Posts(Resource):
     @login_required(api)
-    @api.expect(get_new_post_model(api), validate=True)
+    @api.expect(get_new_post_model(api))
     @api.marshal_with(get_content_model(api, ContentType.POST), code=201, description='Post published successfully.')
     @api.response(201, 'Post published successfully.')
     @api.response(300, 'invalid board_id supplied')
@@ -20,8 +20,7 @@ class Posts(Resource):
     @api.response(404, 'Cant find board')
     def post(self, user):
         """Publish new post"""
-        payload = request.json
-        return save_new_post(user, payload)
+        return save_new_post(user, request)
 
 
 @api.route('/<int:post_id>')

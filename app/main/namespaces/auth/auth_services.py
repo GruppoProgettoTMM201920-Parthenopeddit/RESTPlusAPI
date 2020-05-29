@@ -1,6 +1,8 @@
 from app.main import db
 from app.main.model.user import User
 from app.main.util.UniparthenopeAPI.requests import login_request
+from app.main.model.device_token import DeviceToken
+from app.main.util.extract_resource import extract_resource
 
 
 def login(token, user_id):
@@ -21,3 +23,24 @@ def login(token, user_id):
             'message': error if error else 'Unknown error'
         }
         return response_object, 452
+
+
+def register_new_token(user, request):
+    try:
+        token = extract_resource(request, 'token')
+    except Exception:
+        return {}, 400
+
+    device = DeviceToken.query.filter(DeviceToken.token == token).first()
+
+    if device != None:
+        if device.user != user:
+            device.user = user
+            db.session.commit()
+            return 202
+        else:
+            return 200
+    else:
+        db.session.add(DeviceToken(token=token, user=user))
+        db.session.commit()
+        return 201

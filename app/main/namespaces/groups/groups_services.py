@@ -6,14 +6,19 @@ from app.main.model.group_member import GroupMember
 from app.main.model.group_chat import GroupChat
 from app.main.model.post import Post
 from app.main.model.message import Message
+from app.main.util.extract_resource import extract_resource
 
 
 def get_user_groups(user):
     return user.groups.all(), 200
 
 
-def create_group(user, payload):
-    name = payload['group_name']
+def create_group(user, request):
+    try:
+        name = extract_resource(request, 'group_name')
+    except:
+        return {}, 400
+
     if name is None or name == "":
         response_object = {
             'status': 'error',
@@ -27,18 +32,20 @@ def create_group(user, payload):
 
     db.session.commit()
 
-    users_list = payload['invited_members']
-    # TODO
-    #   SEND ALL GROUP INVITES IN WORKER THREAD
-    invites = __send_group_invites(
-        inviter_user=user,
-        group=new_group,
-        invited_users_id_list=users_list
-    )
-
-    db.session.add_all(invites)
-    db.session.commit()
-    return invites, 201
+    try:
+        users_list = extract_resource(request, 'invited_members')
+        # TODO
+        #   SEND ALL GROUP INVITES IN WORKER THREAD
+        invites = __send_group_invites(
+            inviter_user=user,
+            group=new_group,
+            invited_users_id_list=users_list
+        )
+        db.session.add_all(invites)
+        db.session.commit()
+        return invites, 201
+    except:
+        return [], 201
 
 
 def get_user_group_invites(user):
@@ -83,8 +90,12 @@ def leave_group(user, group):
     return response_object, 201
 
 
-def invite_member(user, group, payload):
-    users_list = payload['users_list']
+def invite_member(user, group, request):
+    try:
+        users_list = extract_resource(request, 'users_list')
+    except:
+        return {}, 400
+
     # TODO
     #   SEND ALL GROUP INVITES IN WORKER THREAD
     invites = __send_group_invites(
@@ -102,12 +113,16 @@ def get_group_invites(group):
     return group.invites.all(), 200
 
 
-def answer_to_invite(user, group_id, payload):
+def answer_to_invite(user, group_id, request):
+    try:
+        accepted = extract_resource(request, 'answer')
+    except:
+        return {}, 400
+
     group_invite = user.group_invites.filter(GroupInvite.group_id == group_id).first_or_404()
     group = group_invite.group
     db.session.delete(group_invite)
 
-    accepted = payload['answer']
     if accepted:
         membership = GroupMember(user=user, group=group, is_owner=False)
         db.session.add(membership)
@@ -126,8 +141,12 @@ def get_group_members(group):
     return group.members.all(), 200
 
 
-def make_owner(group, payload):
-    users_list = payload['users_list']
+def make_owner(group, request):
+    try:
+        users_list = extract_resource(request, 'users_list')
+    except:
+        return {}, 400
+
     # TODO
     #   MAKE USERS OWNER IN WORKER THREAD
     owners = __make_owners(
@@ -143,9 +162,13 @@ def get_group_posts(group):
     return group.posts.all(), 200
 
 
-def publish_post_to_group(user, group, payload):
-    title = payload['title']
-    body = payload['body']
+def publish_post_to_group(user, group, request):
+    try:
+        title = extract_resource(request, 'title')
+        body = extract_resource(request, 'body')
+    except:
+        return {}, 400
+
     new_post = Post(author=user, title=title, body=body, posted_to_board=group)
 
     db.session.add(new_post)
@@ -158,15 +181,26 @@ def get_group_messages(group):
     return group.chat.received_messages.all(), 200
 
 
-def send_message(user, group, payload):
-    message_text = payload['body']
-    new_message = Message(sender_user=user, receiver_chat=group.chat, body=message_text)
+def send_message(user, group, request):
     try:
-        replies_to_message_id = payload['replies_to_message_id']
-        replies_to_message = group.chat.received_messages.filter(Message.id == replies_to_message_id).first_or_404()
-        new_message.replies_to_message = replies_to_message
+        message_text = extract_resource(request, 'body')
     except:
-        pass
+        return {}, 400
+
+    try:
+        replies_to_message_id = extract_resource(request, 'replies_to_message_id')
+    except:
+        replies_to_message_id = None
+
+    new_message = Message(sender_user=user, receiver_chat=group.chat, body=message_text)
+
+    if replies_to_message_id != None:
+        try:
+            replies_to_message = group.chat.received_messages.filter(Message.id == replies_to_message_id).first_or_404()
+            new_message.replies_to_message = replies_to_message
+        except:
+            pass
+
     db.session.add(new_message)
     db.session.commit()
     return new_message, 201

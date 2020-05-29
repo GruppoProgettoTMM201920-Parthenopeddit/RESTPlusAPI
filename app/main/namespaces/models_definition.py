@@ -91,8 +91,14 @@ message_mapping = {
 
 new_message_mapping = {
     'body': fields.String(description='text of the message'),
+    'replies_to_message_id': fields.Integer(description='Id of message replied to'),
     'receiver_chat_id': fields.Integer(),
 }
+
+new_device_token_mapping = {
+    'token': fields.String(description='Device token')
+}
+
 
 class ContentType(Enum):
     POST = 'post'
@@ -223,3 +229,7 @@ def get_message_model(api):
 
 def get_new_message_model(api):
     return api.model('new message', new_message_mapping)
+
+
+def get_new_device_token_model(api):
+    return api.model('new device token', new_device_token_mapping)

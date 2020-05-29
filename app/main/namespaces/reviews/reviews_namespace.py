@@ -13,15 +13,14 @@ api = Namespace('Reviews', description="User's reviews framework")
 @api.route("/")
 class Reviews(Resource):
     @login_required(api)
-    @api.expect(get_new_review_model(api), validate=True)
+    @api.expect(get_new_review_model(api))
     @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=201, description='Review published successfully.')
     @api.response(201, 'Review published successfully.')
     @api.response(300, 'invalid reviewed_course_id supplied')
     @api.response(404, 'Cant find course')
     def post(self, user):
         """Publish new review"""
-        payload = request.json
-        return save_new_review(user, payload)
+        return save_new_review(user, request)
 
 
 @api.route('/<int:review_id>')
@@ -33,7 +32,7 @@ class GetReview(Resource):
     @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
         """Get specific post"""
-        return get_review_by_id(user, review_id)
+        return get_review_by_id(review_id)
 
 
 @api.route('/<int:review_id>/comments')
@@ -45,7 +44,7 @@ class GetReviewWithComments(Resource):
     @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
         """Get specific post, with comments"""
-        return get_review_by_id(user, review_id)
+        return get_review_by_id(review_id)
 
 
 @api.route('/<int:review_id>/like')

@@ -2,10 +2,16 @@ from app.main import db
 from app.main.model.comment import Comment
 from app.main.namespaces.content_accessibility import is_comment_accessible, is_content_accessible
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
+from app.main.util.extract_resource import extract_resource
 
 
-def save_new_comment(user, payload):
-    commented_content_id = payload['commented_content_id']
+def save_new_comment(user, request):
+    try:
+        body = extract_resource(request, 'body')
+        commented_content_id = int(extract_resource(request, 'commented_content_id'))
+    except:
+        return {}, 400
+
     if commented_content_id is None:
         response_object = {
             'status': 'error',
@@ -24,7 +30,6 @@ def save_new_comment(user, payload):
 
     root_content = content if content.type != 'comment' else content.root_content
 
-    body = payload['body']
     new_comment = Comment(author=user, body=body, commented_content=content, root_content=root_content)
     db.session.add(new_comment)
     db.session.commit()

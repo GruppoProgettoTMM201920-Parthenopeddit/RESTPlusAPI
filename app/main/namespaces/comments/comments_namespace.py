@@ -13,7 +13,7 @@ api = Namespace('Comments', description="User's comments framework")
 @api.route("/")
 class Comments(Resource):
     @login_required(api)
-    @api.expect(get_new_comment_model(api), validate=True)
+    @api.expect(get_new_comment_model(api))
     @api.marshal_with(get_content_model(api, ContentType.COMMENT), code=201, description='Comment published successfully.')
     @api.response(201, 'Comment published successfully.')
     @api.response(300, 'Invalid payload. content_id needed.')
@@ -21,8 +21,7 @@ class Comments(Resource):
     @api.response(404, 'Cant find content to comment')
     def post(self, user):
         """Publish new comment to a user's content"""
-        payload = request.json
-        return save_new_comment(user, payload)
+        return save_new_comment(user, request)
 
 
 @api.route('/<int:comment_id>')

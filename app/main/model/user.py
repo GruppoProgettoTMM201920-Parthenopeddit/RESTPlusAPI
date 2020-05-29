@@ -67,6 +67,11 @@ class User(db.Model):
         back_populates='invited',
         lazy='dynamic'
     )
+    devices_tokens = db.relationship(
+        'DeviceToken',
+        back_populates='user',
+        lazy='dynamic'
+    )
 
     @hybrid_property
     def joined_groups(self):

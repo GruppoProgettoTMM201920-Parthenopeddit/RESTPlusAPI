@@ -15,7 +15,7 @@ class Message(db.Model):
 
     # FOREIGN KEYS COLUMNS
     sender_id = db.Column(db.String, db.ForeignKey('user.id'), nullable=False)
-    receiver_id = db.Column(db.String, db.ForeignKey('chat.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
 
     # RELATIONSHIPS
     sender_user = db.relationship(

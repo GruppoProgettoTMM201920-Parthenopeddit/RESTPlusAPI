@@ -1,8 +1,9 @@
+from flask import request
 from flask_restplus import Resource, Namespace
 
-from app.main.namespaces.auth.auth_services import login
-from app.main.util.auth_decorator import token_required
-from app.main.namespaces.models_definition import get_complete_user_model
+from app.main.namespaces.auth.auth_services import login, register_new_token
+from app.main.util.auth_decorator import token_required, login_required
+from app.main.namespaces.models_definition import get_complete_user_model, get_new_device_token_model
 
 api = Namespace('Authentication', description='authentication framework')
 
@@ -19,3 +20,12 @@ class UserLogin(Resource):
     def get(self, token, user_id):
         """Login user"""
         return login(token, user_id)
+
+
+@api.route("/register_device_token")
+class RegisterDeviceToken(Resource):
+    @login_required(api)
+    @api.expect(get_new_device_token_model(api))
+    def post(self, user):
+        print('registering')
+        return register_new_token(user, request)

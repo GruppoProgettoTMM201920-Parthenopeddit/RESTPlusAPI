@@ -3,11 +3,22 @@ from app.main.model.board import Board
 from app.main.model.post import Post
 from app.main.namespaces.content_accessibility import is_post_accessible
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
+from app.main.util.extract_resource import extract_resource
 
 
-def save_new_post(user, payload):
-    board_id = payload['board_id']
-    if board_id is not None and board_id != 0:
+def save_new_post(user, request):
+    try:
+        title = extract_resource(request, 'title')
+        body = extract_resource(request, 'body')
+    except:
+        return {}, 400
+
+    try:
+        board_id = int(extract_resource(request, 'board_id'))
+    except:
+        board_id = None
+
+    if board_id != None and board_id != 0:
         board = Board.query.filter(Board.id == board_id).first_or_404()
         if not board:
             response_object = {
@@ -29,8 +40,6 @@ def save_new_post(user, payload):
         board_id = None
 
     author_id = user.id
-    title = payload['title']
-    body = payload['body']
     new_post = Post(author_id=author_id, title=title, body=body, posted_to_board_id=board_id)
 
     db.session.add(new_post)

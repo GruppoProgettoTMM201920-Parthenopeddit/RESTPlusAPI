@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>Chat Room</title>
-        <script src="http://25.39.180.198:5000/javascript/socketio" crossorigin="anonymous"></script>
-        <script src="http://25.39.180.198:5000/javascript/jquery" crossorigin="anonymous"></script>
+        <script src="http://127.0.0.1:5000/javascript/socketio" crossorigin="anonymous"></script>
+        <script src="http://127.0.0.1:5000/javascript/jquery" crossorigin="anonymous"></script>
     </head>
     <body>
         <ul id="messages"></ul>
@@ -13,7 +13,7 @@
 
         <script type="text/javascript">
             $(document).ready(function() {
-                var socket = io.connect('http://25.39.180.198:5000');
+                var socket = io.connect('http://127.0.0.1:5000');
 
                 socket.on('connect', function() {
                     socket.send('User has connected!');

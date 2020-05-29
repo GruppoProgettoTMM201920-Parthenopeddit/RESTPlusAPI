@@ -8,14 +8,14 @@ def like_content(user, content):
 
         response_object = {
             'status': 'success',
-            'message': "User removed like from post {}".format(content.id),
+            'message': "User removed like from content {}".format(content.id),
         }
         return response_object, 211
     elif content == user.disliked_content.filter_by(id=content.id).first():
         user.disliked_content.remove(content)
         response_object = {
             'status': 'success',
-            'message': "User removed dislike and liked post {}".format(content.id),
+            'message': "User removed dislike and liked content {}".format(content.id),
         }
         user.liked_content.append(content)
         db.session.commit()
@@ -23,7 +23,7 @@ def like_content(user, content):
     else:
         response_object = {
             'status': 'success',
-            'message': "User liked post {}".format(content.id),
+            'message': "User liked content {}".format(content.id),
         }
         user.liked_content.append(content)
         db.session.commit()
@@ -37,14 +37,14 @@ def dislike_content(user, content):
 
         response_object = {
             'status': 'success',
-            'message': "User removed dislike from post {}".format(content.id),
+            'message': "User removed dislike from content {}".format(content.id),
         }
         return response_object, 211
     elif content == user.liked_content.filter_by(id=content.id).first():
         user.liked_content.remove(content)
         response_object = {
             'status': 'success',
-            'message': "User removed like and disliked post {}".format(content.id),
+            'message': "User removed like and disliked content {}".format(content.id),
         }
         user.disliked_content.append(content)
         db.session.commit()
@@ -52,7 +52,7 @@ def dislike_content(user, content):
     else:
         response_object = {
             'status': 'success',
-            'message': "User disliked post {}".format(content.id),
+            'message': "User disliked content {}".format(content.id),
         }
         user.disliked_content.append(content)
         db.session.commit()

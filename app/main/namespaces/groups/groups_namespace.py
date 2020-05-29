@@ -5,10 +5,10 @@ from app.main.util.auth_decorator import login_required
 from app.main.namespaces.groups.groups_services import get_user_groups, create_group, get_user_group_invites, \
     get_group_by_id, leave_group, invite_member, answer_to_invite, get_group_invites, get_group_members, make_owner, \
     get_group_posts, publish_post_to_group, get_group_messages, send_message
-from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, get_simple_user_model, \
+from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, \
     get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_content_model, ContentType, \
     get_new_post_model, get_message_model, get_new_message_model
-from main.namespaces.groups.group_decorator import require_group_membership, require_group_ownership
+from app.main.namespaces.groups.group_decorator import require_group_membership, require_group_ownership
 
 api = Namespace('Groups', description="Users ad-hoc Groups framework")
 
@@ -24,13 +24,12 @@ class Groups(Resource):
 
     @login_required(api)
     @api.marshal_list_with(get_group_invite_model(api), code=201, description='Successfully created group')
-    @api.expect(get_new_group_model(api), validate=True)
+    @api.expect(get_new_group_model(api))
     @api.response(300, 'Invalid payload. group name needed.')
     @api.response(201, 'Successfully created group')
     def post(self, user):
         """Create new group"""
-        payload = request.json
-        return create_group(user, payload)
+        return create_group(user, request)
 
 
 @api.route("/invites")
@@ -77,9 +76,8 @@ class GroupInvite(Resource):
     @api.response(201, 'Successfully invited user/s to group')
     @api.expect(get_users_id_list(api))
     def post(self, user, group, **kwargs):
-        """Invite user as group member"""
-        payload = request.json
-        return invite_member(user, group, payload)
+        """Invite users as group members"""
+        return invite_member(user, group, request)
 
     @login_required(api)
     @require_group_membership(api)
@@ -95,14 +93,13 @@ class GroupInvite(Resource):
 class GroupInviteAnswer(Resource):
     @login_required(api)
     @api.marshal_with(get_user_group_model(api), code=201, description='Successfully accepted invite to group')
-    @api.expect(get_answer_model(api), validate=True)
+    @api.expect(get_answer_model(api))
     @api.response(404, 'Group invite not found')
     @api.response(201, 'Successfully accepted invite to group')
     @api.response(202, 'Successfully declined invite')
     def post(self, user, group_id):
         """Accept or refuse a group invite"""
-        payload = request.json
-        return answer_to_invite(user, group_id, payload)
+        return answer_to_invite(user, group_id, request)
 
 
 @api.route("/<int:group_id>/members")
@@ -127,8 +124,7 @@ class GroupsMembersMakeOnwer(Resource):
     @api.expect(get_users_id_list(api))
     def post(self, group, **kwargs):
         """Make a group member an owner"""
-        payload = request.json
-        return make_owner(group, payload)
+        return make_owner(group, request)
 
 
 @api.route("/<int:group_id>/posts")
@@ -143,12 +139,11 @@ class GroupPosts(Resource):
 
     @login_required(api)
     @require_group_membership(api)
-    @api.expect(get_new_post_model(api), validate=True)
+    @api.expect(get_new_post_model(api))
     @api.marshal_with(get_content_model(api, ContentType.POST), code=201, description='Post published successfully.')
     def post(self, user, group, **kwargs):
         """Publish a post to the group's board"""
-        payload = request.json
-        return publish_post_to_group(user, group, payload)
+        return publish_post_to_group(user, group, request)
 
 
 @api.route("/<int:group_id>/messages")
@@ -167,5 +162,4 @@ class GroupMessages(Resource):
     @api.expect(get_new_message_model(api))
     def post(self, user, group, **kwargs):
         """Send a message to the group-chat"""
-        payload = request.json
-        return send_message(user, group, payload)
+        return send_message(user, group, request)
