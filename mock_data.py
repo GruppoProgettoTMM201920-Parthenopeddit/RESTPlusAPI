@@ -28,9 +28,9 @@ def populate_db():
     post2 = Post(author=user2, title="post 1 di user2", body="Hello world")
     db.session.add(post2)
 
-    comment1 = Comment(author=user3, body="Ciao, sei nuovo?", commented_content=post1, root_content=post1)
+    comment1 = Comment(author=user3, body="Test commento top level a post 1", commented_content=post1, root_content=post1)
     db.session.add(comment1)
-    comment2 = Comment(author=user2, body="Mi sembra ovvio", commented_content=comment1, root_content=comment1.root_content)
+    comment2 = Comment(author=user2, body="Test commento 2nd level a commento 11", commented_content=comment1, root_content=comment1.root_content)
     db.session.add(comment2)
 
     comment3 = Comment(author=user3, body="test1", commented_content=comment2, root_content=comment2.root_content)

@@ -3,8 +3,8 @@ from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.comments.comments_services import save_new_comment, get_comment_by_id, dislike_comment_by_id, \
     like_comment_by_id
-from app.main.namespaces.models_definition import get_new_comment_model, ContentType, get_content_with_comments_model, \
-    get_content_model
+from app.main.namespaces.models_definition import get_new_comment_model, get_comment_model, \
+    get_comment_with_comments_model
 from app.main.util.auth_decorator import login_required
 
 api = Namespace('Comments', description="User's comments framework")
@@ -14,7 +14,7 @@ api = Namespace('Comments', description="User's comments framework")
 class Comments(Resource):
     @login_required(api)
     @api.expect(get_new_comment_model(api))
-    @api.marshal_with(get_content_model(api, ContentType.COMMENT), code=201, description='Comment published successfully.')
+    @api.marshal_with(get_comment_model(api), code=201, description='Comment published successfully.')
     @api.response(201, 'Comment published successfully.')
     @api.response(300, 'Invalid payload. content_id needed.')
     @api.response(401, 'Commented post is private')
@@ -28,7 +28,7 @@ class Comments(Resource):
 @api.param('comment_id', 'The Comment identifier')
 class GetComment(Resource):
     @login_required(api)
-    @api.marshal_with(get_content_model(api, ContentType.COMMENT), code=200, description='Comment successfully retrieved')
+    @api.marshal_with(get_comment_model(api), code=200, description='Comment successfully retrieved')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(200, 'Comment successfully retrieved')
@@ -41,7 +41,7 @@ class GetComment(Resource):
 @api.param('comment_id', 'The Comment identifier')
 class GetCommentWithComments(Resource):
     @login_required(api)
-    @api.marshal_with(get_content_with_comments_model(api, ContentType.COMMENT), code=200, description='Comment successfully retrieved')
+    @api.marshal_with(get_comment_with_comments_model(api), code=200, description='Comment successfully retrieved')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(200, 'Comment successfully retrieved')

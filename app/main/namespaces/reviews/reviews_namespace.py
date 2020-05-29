@@ -1,8 +1,7 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_new_review_model, get_content_with_comments_model, \
-    ContentType, get_content_model
+from app.main.namespaces.models_definition import get_new_review_model, get_review_model, get_review_with_comments_model
 from app.main.namespaces.reviews.reviews_services import save_new_review, get_review_by_id, dislike_review_by_id, \
     like_review_by_id
 from app.main.util.auth_decorator import login_required
@@ -14,7 +13,7 @@ api = Namespace('Reviews', description="User's reviews framework")
 class Reviews(Resource):
     @login_required(api)
     @api.expect(get_new_review_model(api))
-    @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=201, description='Review published successfully.')
+    @api.marshal_with(get_review_model(api), code=201, description='Review published successfully.')
     @api.response(201, 'Review published successfully.')
     @api.response(300, 'invalid reviewed_course_id supplied')
     @api.response(404, 'Cant find course')
@@ -27,7 +26,7 @@ class Reviews(Resource):
 @api.param('review_id', 'The Review identifier')
 class GetReview(Resource):
     @login_required(api)
-    @api.marshal_with(get_content_model(api, ContentType.REVIEW), code=200, description='Review successfully retrieved')
+    @api.marshal_with(get_review_model(api), code=200, description='Review successfully retrieved')
     @api.response(404, 'Cant find review')
     @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):
@@ -39,7 +38,7 @@ class GetReview(Resource):
 @api.param('review_id', 'The Review identifier')
 class GetReviewWithComments(Resource):
     @login_required(api)
-    @api.marshal_with(get_content_with_comments_model(api, ContentType.REVIEW), code=200, description='Review successfully retrieved')
+    @api.marshal_with(get_review_with_comments_model(api), code=200, description='Review successfully retrieved')
     @api.response(404, 'Cant find review')
     @api.response(200, 'Review successfully retrieved')
     def get(self, user, review_id):

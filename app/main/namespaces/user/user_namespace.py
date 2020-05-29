@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_complete_user_model, ContentType, get_content_model
+from app.main.namespaces.models_definition import get_complete_user_model, get_post_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed
 from app.main.util.auth_decorator import login_required
 
@@ -32,7 +32,7 @@ class UserData(Resource):
 @api.param('per_page', 'How many posts per page')
 class UserFeed(Resource):
     @login_required(api)
-    @api.marshal_list_with(get_content_model(api, ContentType.POST))
+    @api.marshal_list_with(get_post_model(api))
     def get(self, user, per_page, page):
         """Fetch user posts feed"""
         return get_user_feed(user, per_page, page)

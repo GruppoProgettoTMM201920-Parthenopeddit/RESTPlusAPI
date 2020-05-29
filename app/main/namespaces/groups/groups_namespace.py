@@ -6,8 +6,8 @@ from app.main.namespaces.groups.groups_services import get_user_groups, create_g
     get_group_by_id, leave_group, invite_member, answer_to_invite, get_group_invites, get_group_members, make_owner, \
     get_group_posts, publish_post_to_group, get_group_messages, send_message
 from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, \
-    get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_content_model, ContentType, \
-    get_new_post_model, get_message_model, get_new_message_model
+    get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_post_model, get_new_post_model, \
+    get_message_model, get_new_message_model
 from app.main.namespaces.groups.group_decorator import require_group_membership, require_group_ownership
 
 api = Namespace('Groups', description="Users ad-hoc Groups framework")
@@ -132,7 +132,7 @@ class GroupsMembersMakeOnwer(Resource):
 class GroupPosts(Resource):
     @login_required(api)
     @require_group_membership(api)
-    @api.marshal_with(get_content_model(api, ContentType.POST), code=200, description='Post successfully retrieved')
+    @api.marshal_with(get_post_model(api), code=200, description='Post successfully retrieved')
     def get(self, group, **kwargs):
         """Get group published posts"""
         return get_group_posts(group)
@@ -140,7 +140,7 @@ class GroupPosts(Resource):
     @login_required(api)
     @require_group_membership(api)
     @api.expect(get_new_post_model(api))
-    @api.marshal_with(get_content_model(api, ContentType.POST), code=201, description='Post published successfully.')
+    @api.marshal_with(get_post_model(api), code=201, description='Post published successfully.')
     def post(self, user, group, **kwargs):
         """Publish a post to the group's board"""
         return publish_post_to_group(user, group, request)

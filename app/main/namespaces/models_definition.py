@@ -14,7 +14,7 @@ extra_user_mapping = {
 }
 complete_user_mapping = dict(simple_user_mapping, **extra_user_mapping)
 
-content_mapping = {
+content_base_mapping = {
     'id': fields.Integer(description='Content id'),
     'body': fields.String(description='Message body of the content'),
     'timestamp': fields.DateTime(description='Date and time of publication'),
@@ -29,19 +29,22 @@ post_fields_mapping = {
     'title': fields.String(description='Title of the post'),
     'posted_to_board_id': fields.Integer(description='Board id this post has been published to'),
 }
-post_mapping = dict(content_mapping, **post_fields_mapping)
+post_mapping = dict(content_base_mapping, **post_fields_mapping)
 
 comment_fields_mapping = {
     'commented_content_id': fields.Integer(description='Id of commented content'),
+    'root_content_id': fields.Integer(description='Id of root commented content'),
 }
-comment_mapping = dict(content_mapping, **comment_fields_mapping)
+comment_mapping = dict(content_base_mapping, **comment_fields_mapping)
 
 review_fields_mapping = {
     'reviewed_course_id': fields.Integer(description='id of reviewed course'),
     'score_liking': fields.Integer(description='0 to 5 score of liking for the reviewed course'),
     'score_difficulty': fields.Integer(description='0 to 5 score of difficulty for the reviewed course'),
 }
-review_mapping = dict(content_mapping, **review_fields_mapping)
+review_mapping = dict(content_base_mapping, **review_fields_mapping)
+
+content_full_mapping = dict(content_base_mapping, **review_fields_mapping, **post_fields_mapping, **comment_fields_mapping)
 
 new_post_mapping = {
     'title': fields.String(required=True, description='Title of the post'),
@@ -59,11 +62,11 @@ new_review_mapping = {
     'score_difficulty': fields.Integer(required=False,
                                        description='0 to 5 score of difficulty for the reviewed course'),
 }
+
 page_selection_mapping = {
     'page': fields.Integer(),
     'per_page': fields.Integer(),
 }
-
 board_mapping = {
     'id': fields.Integer(description='ID of the board'),
     'name': fields.String(description='Name descriptor'),
@@ -82,44 +85,19 @@ group_member_mapping = {
 new_group_mapping = {
     'group_name': fields.String(required=True, description='Name descriptor')
 }
-
 message_mapping = {
     'id': fields.Integer(description='Message identifier'),
     'body': fields.String(description='text of the message'),
     'timestamp': fields.DateTime(description='date and time message was sent on'),
 }
-
 new_message_mapping = {
     'body': fields.String(description='text of the message'),
     'replies_to_message_id': fields.Integer(description='Id of message replied to'),
     'receiver_chat_id': fields.Integer(),
 }
-
 new_device_token_mapping = {
     'token': fields.String(description='Device token')
 }
-
-
-class ContentType(Enum):
-    POST = 'post'
-    REVIEW = 'review'
-    COMMENT = 'comment'
-
-    def getMap(self):
-        switcher = {
-            self.POST: post_mapping,
-            self.REVIEW: review_mapping,
-            self.COMMENT: comment_mapping,
-        }
-        return switcher.get(self)
-
-    def getLabel(self):
-        switcher = {
-            self.POST: 'post',
-            self.REVIEW: 'review',
-            self.COMMENT: 'comment',
-        }
-        return switcher.get(self)
 
 
 def get_complete_user_model(api):
@@ -142,35 +120,95 @@ def get_new_review_model(api):
     return api.model('new review', new_review_mapping)
 
 
-def get_content_model(api, content_type):
-    content_model = content_type.getMap().copy()
-    content_model['author'] = fields.Nested(get_simple_user_model(api))
-    return api.model(content_type.getLabel(), content_model)
+def get_board_model(api):
+    return api.model('board', board_mapping)
+
+
+def get_course_model(api):
+    # TODO create course model
+    return api.model('course', board_mapping)
+
+
+def get_post_model(api):
+    post_model = post_mapping.copy()
+    post_model['author'] = fields.Nested(get_simple_user_model(api))
+    post_model['posted_to_board'] = fields.Nested(get_board_model(api))
+    return api.model('post', post_model)
+
+
+def get_comment_model(api):
+    comment_model = comment_mapping.copy()
+    comment_model['author'] = fields.Nested(get_simple_user_model(api))
+    return api.model('comment', comment_model)
+
+
+def get_review_model(api):
+    review_model = review_mapping.copy()
+    review_model['author'] = fields.Nested(get_simple_user_model(api))
+    review_model['reviewed_course']: fields.Nested(get_course_model(api))
+    return api.model('review', review_model)
 
 
 def __get_recursive_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH-1):
-    comments_mapping = ContentType.COMMENT.getMap().copy()
-    comments_mapping['author'] = fields.Nested(get_simple_user_model(api))
+    comment_model = comment_mapping.copy()
+    comment_model['author'] = fields.Nested(get_simple_user_model(api))
+
     if recursive_steps:
-        comments_mapping['comments'] = fields.List(
+        comment_model['comments'] = fields.List(
             fields.Nested(
                 __get_recursive_comments_model(api, recursive_steps - 1)
             )
         )
-    return api.model("content_comment_{}".format(recursive_steps), comments_mapping)
+    return api.model("content_comment_{}".format(recursive_steps), comment_model)
 
 
-def get_content_with_comments_model(api, content_type, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
-    rec_content_mapping = content_type.getMap().copy()
-    rec_content_mapping['author'] = fields.Nested(get_simple_user_model(api))
+def get_post_with_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
+    post_model = post_mapping.copy()
+    post_model['author'] = fields.Nested(get_simple_user_model(api))
+    post_model['posted_to_board'] = fields.Nested(get_board_model(api))
+
     if recursive_steps:
-        rec_content_mapping['comments'] = fields.List(
+        post_model['comments'] = fields.List(
             fields.Nested(
                 __get_recursive_comments_model(api, recursive_steps - 1)
             )
         )
-    model_label = "{}_with_comments".format(content_type.getLabel())
-    return api.model(model_label, rec_content_mapping)
+
+    model_label = "post with comments"
+    return api.model(model_label, post_model)
+
+
+def get_comment_with_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
+    comment_model = comment_mapping.copy()
+    comment_model['author'] = fields.Nested(get_simple_user_model(api))
+    comment_model['commented_content']: fields.Nested(__get_generic_content_model(api))
+    comment_model['root_content']: fields.Nested(__get_generic_content_model(api))
+
+    if recursive_steps:
+        comment_model['comments'] = fields.List(
+            fields.Nested(
+                __get_recursive_comments_model(api, recursive_steps - 1)
+            )
+        )
+
+    model_label = "comment with comments"
+    return api.model(model_label, comment_model)
+
+
+def get_review_with_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
+    review_model = review_mapping.copy()
+    review_model['author'] = fields.Nested(get_simple_user_model(api))
+    review_model['reviewed_course']: fields.Nested(get_course_model(api))
+
+    if recursive_steps:
+        review_model['comments'] = fields.List(
+            fields.Nested(
+                __get_recursive_comments_model(api, recursive_steps - 1)
+            )
+        )
+
+    model_label = "review with comments"
+    return api.model(model_label, review_model)
 
 
 def get_page_selection_model(api):
@@ -183,8 +221,9 @@ def get_group_model(api):
 
 def get_user_group_model(api):
     group_member_model = group_member_mapping.copy()
+    group_member_model['user'] = fields.Nested(get_simple_user_model(api))
     group_member_model['group'] = fields.Nested(get_group_model(api))
-    return api.model('user group', group_member_model)
+    return api.model('user group membership', group_member_model)
 
 
 def get_users_id_list(api):
