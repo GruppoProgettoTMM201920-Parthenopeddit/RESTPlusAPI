@@ -60,6 +60,11 @@ def populate_db():
     review2 = Review(author=user3, reviewed_course=course1, body="Troppo difficile", score_liking=2, score_difficulty=5)
     db.session.add(review2)
 
+    comment_r_1 = Comment(author=user1, body="Si, adoro android!", commented_content=review1, root_content=review1)
+    db.session.add(comment_r_1)
+
+    user1.liked_content.append(review1)
+
     group1 = Group(name="SCEMI_1", chat=GroupChat())
     db.session.add(group1)
 

@@ -9,8 +9,6 @@ from app.main.model.group import Group
 from app.main.model.likes import likes
 from app.main.model.post import Post
 from app.main.model.user_follows_course import user_follows_course
-from app.main.model.group_member import GroupMember
-from app.main.model.group_invite import GroupInvite
 
 
 class User(db.Model):

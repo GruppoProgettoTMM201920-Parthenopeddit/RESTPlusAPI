@@ -181,8 +181,6 @@ def get_post_with_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
 def get_comment_with_comments_model(api, recursive_steps=COMMENTS_RECURSIVE_DEPTH):
     comment_model = comment_mapping.copy()
     comment_model['author'] = fields.Nested(get_simple_user_model(api))
-    comment_model['commented_content']: fields.Nested(__get_generic_content_model(api))
-    comment_model['root_content']: fields.Nested(__get_generic_content_model(api))
 
     if recursive_steps:
         comment_model['comments'] = fields.List(

@@ -221,7 +221,14 @@ def __make_owners(group, new_owners_id_list):
 
 
 def __send_group_invites(inviter_user, group, invited_users_id_list):
-    users = User.query.filter(User.id.in_(invited_users_id_list)).all()
+    users = User.query.filter(
+        User.id.in_(
+            invited_users_id_list
+        ),
+        User.id.notin_(
+            group.members.join(User).with_entities(User.id)
+        )
+    ).all()
 
     invites = []
     for invited_user in users:
