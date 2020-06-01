@@ -14,6 +14,7 @@ Flask-Migrate==2.5.3
 Flask-Moment==0.9.0
 Flask-PyFCM==0.1.1
 flask-restplus==0.13.0
+Flask-SocketIO==4.3.0
 Flask-SQLAlchemy==2.4.3
 Flask-Testing==0.8.0
 gunicorn==20.0.4
@@ -32,6 +33,8 @@ pyrsistent==0.16.0
 python-dateutil==2.8.1
 python-dotenv==0.13.0
 python-editor==1.0.4
+python-engineio==3.12.1
+python-socketio==4.5.1
 pytz==2020.1
 requests==2.23.0
 six==1.14.0
