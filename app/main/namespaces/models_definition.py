@@ -1,5 +1,3 @@
-from enum import Enum
-
 from flask_restplus import fields
 
 from config import COMMENTS_RECURSIVE_DEPTH
@@ -242,7 +240,10 @@ def get_group_invite_model(api):
         'inviter': fields.Nested(get_simple_user_model(api)),
         'invited': fields.Nested(get_simple_user_model(api)),
         'group': fields.Nested(get_group_model(api)),
-        'timestamp': fields.DateTime,
+        'inviter_id': fields.String(),
+        'invited_id': fields.String(),
+        'group_id': fields.Integer(),
+        'timestamp': fields.DateTime(),
     }
     return api.model('group invite', group_invite_model)
 

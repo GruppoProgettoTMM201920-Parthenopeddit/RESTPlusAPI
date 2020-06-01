@@ -1,3 +1,5 @@
+import json
+
 from app.main import db
 from app.main.model.group import Group
 from app.main.model.user import User
@@ -29,11 +31,11 @@ def create_group(user, request):
     new_group = Group(name=name, chat=GroupChat())
     db.session.add(new_group)
     db.session.add(GroupMember(user=user, group=new_group, is_owner=True))
-
     db.session.commit()
 
     try:
-        users_list = extract_resource(request, 'invited_members')
+        users_list = json.loads(extract_resource(request, 'invited_members'))
+
         # TODO
         #   SEND ALL GROUP INVITES IN WORKER THREAD
         invites = __send_group_invites(
@@ -43,6 +45,7 @@ def create_group(user, request):
         )
         db.session.add_all(invites)
         db.session.commit()
+
         return invites, 201
     except:
         return [], 201
@@ -92,7 +95,7 @@ def leave_group(user, group):
 
 def invite_member(user, group, request):
     try:
-        users_list = extract_resource(request, 'users_list')
+        users_list = json.loads(extract_resource(request, 'users_list'))
     except:
         return {}, 400
 
@@ -106,6 +109,9 @@ def invite_member(user, group, request):
 
     db.session.add_all(invites)
     db.session.commit()
+
+    print(invites)
+
     return invites, 201
 
 
@@ -143,7 +149,7 @@ def get_group_members(group):
 
 def make_owner(group, request):
     try:
-        users_list = extract_resource(request, 'users_list')
+        users_list = json.loads(extract_resource(request, 'users_list'))
     except:
         return {}, 400
 
@@ -158,7 +164,8 @@ def make_owner(group, request):
     return owners, 201
 
 
-def get_group_posts(group):
+def get_group_posts(group, per_page, page):
+    # TODO Paginated results
     return group.posts.all(), 200
 
 
@@ -221,17 +228,22 @@ def __make_owners(group, new_owners_id_list):
 
 
 def __send_group_invites(inviter_user, group, invited_users_id_list):
-    users = User.query.filter(
+    invited_users = User.query.filter(
         User.id.in_(
             invited_users_id_list
         ),
         User.id.notin_(
-            group.members.join(User).with_entities(User.id)
+            group.members.join(User).with_entities(User.id).union(
+                group.invites.join(User, User.id == GroupInvite.invited_id).with_entities(User.id)
+            )
         )
     ).all()
 
     invites = []
-    for invited_user in users:
-        invites.append(GroupInvite(inviter=inviter_user, invited=invited_user, group=group))
+    for invited_user in invited_users:
+        try:
+            invites.append(GroupInvite(inviter=inviter_user, invited=invited_user, group=group))
+        except:
+            pass
 
     return invites

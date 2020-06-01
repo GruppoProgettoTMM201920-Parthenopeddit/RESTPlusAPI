@@ -127,16 +127,24 @@ class GroupsMembersMakeOnwer(Resource):
         return make_owner(group, request)
 
 
-@api.route("/<int:group_id>/posts")
+@api.route("/<int:group_id>/posts/", defaults={'per_page': 20, 'page': 1})
+@api.route("/<int:group_id>/posts/<int:page>", defaults={'per_page': 20})
+@api.route("/<int:group_id>/posts/<int:per_page>/<int:page>")
+@api.param('page', 'Page to fetch')
+@api.param('per_page', 'How many posts per page')
 @api.param('group_id', 'The Group identifier')
-class GroupPosts(Resource):
+class GroupPostsByPage(Resource):
     @login_required(api)
     @require_group_membership(api)
     @api.marshal_with(get_post_model(api), code=200, description='Post successfully retrieved')
-    def get(self, group, **kwargs):
+    def get(self, group, per_page, page, **kwargs):
         """Get group published posts"""
-        return get_group_posts(group)
+        return get_group_posts(group, per_page, page)
 
+
+@api.route("/<int:group_id>/posts")
+@api.param('group_id', 'The Group identifier')
+class NewGroupPost(Resource):
     @login_required(api)
     @require_group_membership(api)
     @api.expect(get_new_post_model(api))
@@ -146,20 +154,20 @@ class GroupPosts(Resource):
         return publish_post_to_group(user, group, request)
 
 
-@api.route("/<int:group_id>/messages")
-@api.param('group_id', 'The Group identifier')
-class GroupMessages(Resource):
-    @login_required(api)
-    @require_group_membership(api)
-    @api.marshal_list_with(get_message_model(api), code=200, description='Successfully retrieved messages')
-    def get(self, group, **kwargs):
-        """Get messages of the group-chat"""
-        return get_group_messages(group)
-
-    @login_required(api)
-    @require_group_membership(api)
-    @api.marshal_with(get_message_model(api), code=201, description='Message published successfully.')
-    @api.expect(get_new_message_model(api))
-    def post(self, user, group, **kwargs):
-        """Send a message to the group-chat"""
-        return send_message(user, group, request)
+# @api.route("/<int:group_id>/messages")
+# @api.param('group_id', 'The Group identifier')
+# class GroupMessages(Resource):
+#     @login_required(api)
+#     @require_group_membership(api)
+#     @api.marshal_list_with(get_message_model(api), code=200, description='Successfully retrieved messages')
+#     def get(self, group, **kwargs):
+#         """Get messages of the group-chat"""
+#         return get_group_messages(group)
+#
+#     @login_required(api)
+#     @require_group_membership(api)
+#     @api.marshal_with(get_message_model(api), code=201, description='Message published successfully.')
+#     @api.expect(get_new_message_model(api))
+#     def post(self, user, group, **kwargs):
+#         """Send a message to the group-chat"""
+#         return send_message(user, group, request)

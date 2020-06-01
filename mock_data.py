@@ -71,6 +71,14 @@ def populate_db():
     group1.members.append(GroupMember(user=user2, group=group1, is_owner=True))
     group1.members.append(GroupMember(user=user3, group=group1, is_owner=False))
 
+    invite1 = GroupInvite(invited=user1, inviter=user2, group=group1)
+    db.session.add(invite1)
+
+    group2 = Group(name="JUST ME", chat=GroupChat())
+    db.session.add(group2)
+
+    group2.members.append(GroupMember(user=user3, group=group2, is_owner=True))
+
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
