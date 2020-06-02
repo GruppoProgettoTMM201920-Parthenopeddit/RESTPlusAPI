@@ -7,7 +7,7 @@ class Post(Content):
 
     # DATA COLUMNS
     id = db.Column(db.Integer, db.ForeignKey('content.id'), primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(1024), nullable=False)
 
     # FOREIGN KEYS COLUMNS
     posted_to_board_id = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=True)

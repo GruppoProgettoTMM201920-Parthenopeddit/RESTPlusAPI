@@ -2,8 +2,8 @@ from datetime import datetime, timezone
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from .dislikes import dislikes
-from .likes import likes
+from app.main.model.dislikes import Dislikes
+from app.main.model.likes import Likes
 from .. import db
 
 
@@ -12,11 +12,11 @@ class Content(db.Model):
 
     # DATA COLUMNS
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    body = db.Column(db.Text(), nullable=False)
+    body = db.Column(db.Text(4294000000), nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
 
     # FOREIGN KEYS COLUMNS
-    author_id = db.Column(db.String, db.ForeignKey('user.id'), nullable=False)
+    author_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
 
     # RELATIONSHIPS
     author = db.relationship(
@@ -31,17 +31,15 @@ class Content(db.Model):
         foreign_keys='Comment.commented_content_id',
         cascade="delete"
     )
-    liked_by_users = db.relationship(
-        'User',
-        secondary=likes,
-        back_populates='liked_content',
+    likes = db.relationship(
+        'Likes',
+        back_populates='content',
         lazy='dynamic',
         cascade="delete"
     )
-    disliked_by_users = db.relationship(
-        'User',
-        secondary=dislikes,
-        back_populates='disliked_content',
+    dislikes = db.relationship(
+        'Dislikes',
+        back_populates='content',
         lazy='dynamic',
         cascade="delete"
     )
@@ -56,14 +54,14 @@ class Content(db.Model):
 
     @hybrid_property
     def likes_num(self):
-        return self.liked_by_users.count()
+        return self.likes.count()
 
     @hybrid_property
     def dislikes_num(self):
-        return self.disliked_by_users.count()
+        return self.dislikes.count()
 
     # INHERITANCE
-    type = db.Column(db.Text())
+    type = db.Column(db.String(255))
     __mapper_args__ = {
         'polymorphic_identity': 'content',
         'polymorphic_on': type

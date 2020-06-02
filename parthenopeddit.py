@@ -1,7 +1,7 @@
 import os
 import cli
 from app import blueprint
-from app.main import create_app, db, socketio, fcm
+from app.main import create_app, db, fcm
 
 # Importing all model classes to init ORM mapping
 from app.main.model.board import Board
@@ -19,6 +19,8 @@ from app.main.model.post import Post
 from app.main.model.review import Review
 from app.main.model.user import User
 from app.main.model.users_chat import UsersChat
+from app.main.model.likes import Likes
+from app.main.model.dislikes import Dislikes
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 
@@ -35,4 +37,4 @@ def make_shell_context():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    app.run()

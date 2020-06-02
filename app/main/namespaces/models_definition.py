@@ -21,6 +21,8 @@ content_base_mapping = {
     'likes_num': fields.Integer(description='number of likes received'),
     'dislikes_num': fields.Integer(description='number of dislikes received'),
     'type': fields.String(description='Content type (Post, Comment, Review)'),
+    'user_liked_content': fields.Boolean(),
+    'user_disliked_content': fields.Boolean(),
 }
 
 post_fields_mapping = {
@@ -96,6 +98,15 @@ new_message_mapping = {
 new_device_token_mapping = {
     'token': fields.String(description='Device token')
 }
+
+like_dislike_score_mapping = {
+    'likes_num': fields.Integer(description='number of likes received'),
+    'dislikes_num': fields.Integer(description='number of dislikes received'),
+}
+
+
+def get_like_dislike_score_model(api):
+    return api.model('like and dislike score', like_dislike_score_mapping)
 
 
 def get_complete_user_model(api):

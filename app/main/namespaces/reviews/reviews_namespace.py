@@ -1,7 +1,8 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_new_review_model, get_review_model, get_review_with_comments_model
+from app.main.namespaces.models_definition import get_new_review_model, get_review_model, \
+    get_review_with_comments_model, get_like_dislike_score_model
 from app.main.namespaces.reviews.reviews_services import save_new_review, get_review_by_id, dislike_review_by_id, \
     like_review_by_id
 from app.main.util.auth_decorator import login_required
@@ -50,6 +51,7 @@ class GetReviewWithComments(Resource):
 @api.param('review_id', 'The Review identifier')
 class LikePost(Resource):
     @login_required(api)
+    @api.marshal_with(get_like_dislike_score_model(api))
     @api.response(404, 'Cant find review')
     @api.response(210, 'liked review')
     @api.response(211, 'removed like from review')
@@ -63,6 +65,7 @@ class LikePost(Resource):
 @api.param('review_id', 'The Review identifier')
 class DislikePost(Resource):
     @login_required(api)
+    @api.marshal_with(get_like_dislike_score_model(api))
     @api.response(404, 'Cant find review')
     @api.response(210, 'liked review')
     @api.response(211, 'removed like from review')

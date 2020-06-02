@@ -24,7 +24,7 @@ class Board(db.Model):
         return self.posts.count()
 
     # INHERITANCE
-    type = db.Column(db.Text())
+    type = db.Column(db.String(255))
     __mapper_args__ = {
         'polymorphic_identity': 'board',
         'polymorphic_on': type

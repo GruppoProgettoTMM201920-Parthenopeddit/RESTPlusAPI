@@ -5,10 +5,10 @@ class DeviceToken(db.Model):
     __tablename__ = "device_token"
 
     # DATA COLUMNS
-    token = db.Column(db.String(), primary_key=True, autoincrement=False)
+    token = db.Column(db.String(1024), primary_key=True, autoincrement=False)
 
     # FOREIGN KEYS COLUMNS
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
 
     # RELATIONSHIPS
     user = db.relationship(

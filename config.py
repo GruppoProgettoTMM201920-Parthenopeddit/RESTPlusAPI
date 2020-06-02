@@ -1,8 +1,5 @@
 import os
 
-# uncomment the line below for postgres database url from environment variable
-# postgres_local_base = os.environ['DATABASE_URL']
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 COMMENTS_RECURSIVE_DEPTH = 5
 DEFAULT_POSTS_PER_PAGE_AMOUNT = 20
@@ -10,7 +7,7 @@ BYPASS_LOGIN = True
 
 # Your api-key can be gotten from:
 # https://console.firebase.google.com/project/<project-name>/settings/cloudmessaging
-FCM_API_KEY = os.getenv('FCM_API_KEY', 'AAAAWnKOp40:APA91bGJX8NxPqQAu5Hlw5lzM4VF7pVnYW8OMRNuvn2XoKz2IltZ4JbuyYsmf5Mt3vMBxV5KqjECpRpLDpHhWaba31NvXo7CfH4JllSl-TbTdI_9OgSooaGuU6vRjD-o2eoqeT24vaHi')
+FCM_API_KEY = os.getenv('FCM_API_KEY')
 
 # Not required proxy dict
 FCM_PROXY_DICT = {
@@ -28,22 +25,21 @@ class DevelopmentConfig(Config):
     # uncomment the line below to use postgres
     # SQLALCHEMY_DATABASE_URI = postgres_local_base
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestingConfig(Config):
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_test.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db'))
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    # uncomment the line below to use postgres
-    # SQLALCHEMY_DATABASE_URI = postgres_local_base
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db'))
 
 
 config_by_name = dict(

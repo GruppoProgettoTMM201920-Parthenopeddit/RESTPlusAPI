@@ -1,0 +1,38 @@
+build docker image
+docker build -t parthenopeddit:latest .
+
+start mysql container
+docker run --name mysql -d `
+    -e MYSQL_RANDOM_ROOT_PASSWORD=yes `
+    -e MYSQL_DATABASE=parthenopeddit `
+    -e MYSQL_USER=parthenopeddit `
+    -e MYSQL_PASSWORD=<database-password> `
+    mysql/mysql-server:5.7
+
+start main container
+docker run --name parthenopeddit -d -p 8000:5000 `
+    -e SECRET_KEY=<secret-key> `
+    --link mysql:dbserver `
+    -e DATABASE_URL=mysql+pymysql://parthenopeddit:<database-password>@dbserver/parthenopeddit `
+    -e FCM_API_KEY=<firebase-api-key> `
+    parthenopeddit:latest
+
+
+
+
+
+WITH KEYS
+
+docker run --name mysql -d `
+    -e MYSQL_RANDOM_ROOT_PASSWORD=yes `
+    -e MYSQL_DATABASE=parthenopeddit `
+    -e MYSQL_USER=parthenopeddit `
+    -e MYSQL_PASSWORD=mVNkruVGgu9Typ9 `
+    mysql/mysql-server:5.7
+
+docker run --name parthenopeddit -d -p 8000:5000 `
+    -e SECRET_KEY=<secret-key> `
+    --link mysql:dbserver `
+    -e DATABASE_URL=mysql+pymysql://parthenopeddit:mVNkruVGgu9Typ9@dbserver/parthenopeddit `
+    -e FCM_API_KEY=AAAAWnKOp40:APA91bGJX8NxPqQAu5Hlw5lzM4VF7pVnYW8OMRNuvn2XoKz2IltZ4JbuyYsmf5Mt3vMBxV5KqjECpRpLDpHhWaba31NvXo7CfH4JllSl-TbTdI_9OgSooaGuU6vRjD-o2eoqeT24vaHi `
+    parthenopeddit:latest

@@ -8,13 +8,13 @@ class Message(db.Model):
 
     # DATA COLUMNS
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    body = db.Column(db.Text(), nullable=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
+    body = db.Column(db.Text(4294000000), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     replies_to_message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=True)
 
     # FOREIGN KEYS COLUMNS
-    sender_id = db.Column(db.String, db.ForeignKey('user.id'), nullable=False)
+    sender_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
 
     # RELATIONSHIPS

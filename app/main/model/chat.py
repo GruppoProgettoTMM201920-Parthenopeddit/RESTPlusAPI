@@ -16,7 +16,7 @@ class Chat(db.Model):
     )
 
     # INHERITANCE
-    type = db.Column(db.Text())
+    type = db.Column(db.String(255))
     __mapper_args__ = {
         'polymorphic_identity': 'chat',
         'polymorphic_on': type

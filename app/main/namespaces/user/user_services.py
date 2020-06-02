@@ -1,4 +1,5 @@
 from app.main.model.user import User
+from app.main.model.post import Post
 
 
 def get_user_data(user, fetched_user_id):
@@ -9,4 +10,4 @@ def get_user_data(user, fetched_user_id):
 
 
 def get_user_feed(user, per_page, page):
-    return user.get_posts_feed().paginate(per_page=per_page, page=page).items, 200
+    return user.get_posts_feed().order_by(Post.timestamp.desc()).paginate(per_page=per_page, page=page).items, 200

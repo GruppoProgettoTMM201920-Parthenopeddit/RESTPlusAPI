@@ -13,6 +13,7 @@ from app.main.model.post import Post
 from app.main.model.review import Review
 from app.main.model.user import User
 from app.main.model.users_chat import UsersChat
+from app.main.model.likes import Likes
 
 
 def populate_db():
@@ -46,8 +47,10 @@ def populate_db():
     comment8 = Comment(author=user3, body="test6", commented_content=comment7, root_content=comment7.root_content)
     db.session.add(comment8)
 
-    user1.liked_content.append(comment1)
-    user3.liked_content.append(comment2)
+    like1 = Likes(user=user1, content=comment1)
+    db.session.add(like1)
+    like2 = Likes(user=user3, content=comment2)
+    db.session.add(like2)
 
     course1 = Course(name="TERMINALI MOBILI E MULTIMEDIALITA")
     db.session.add(course1)
@@ -63,7 +66,8 @@ def populate_db():
     comment_r_1 = Comment(author=user1, body="Si, adoro android!", commented_content=review1, root_content=review1)
     db.session.add(comment_r_1)
 
-    user1.liked_content.append(review1)
+    like3 = Likes(user=user1, content=review1)
+    db.session.add(like3)
 
     group1 = Group(name="SCEMI_1", chat=GroupChat())
     db.session.add(group1)

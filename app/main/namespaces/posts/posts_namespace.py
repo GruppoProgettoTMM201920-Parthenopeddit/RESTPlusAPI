@@ -1,7 +1,8 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_new_post_model, get_post_model, get_post_with_comments_model
+from app.main.namespaces.models_definition import get_new_post_model, get_post_model, get_post_with_comments_model, \
+    get_like_dislike_score_model
 from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id, dislike_post_by_id, like_post_by_id
 from app.main.util.auth_decorator import login_required
 
@@ -52,6 +53,7 @@ class GetPostWithComments(Resource):
 @api.param('post_id', 'The Post identifier')
 class LikePost(Resource):
     @login_required(api)
+    @api.marshal_with(get_like_dislike_score_model(api))
     @api.response(401, 'Post is private')
     @api.response(404, 'Cant find post')
     @api.response(210, 'liked post')
@@ -66,6 +68,7 @@ class LikePost(Resource):
 @api.param('post_id', 'The Post identifier')
 class DislikePost(Resource):
     @login_required(api)
+    @api.marshal_with(get_like_dislike_score_model(api))
     @api.response(401, 'Post is private')
     @api.response(404, 'Cant find post')
     @api.response(210, 'liked post')

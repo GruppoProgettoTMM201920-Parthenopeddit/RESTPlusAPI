@@ -4,7 +4,7 @@ from flask_restplus import Namespace, Resource
 from app.main.namespaces.comments.comments_services import save_new_comment, get_comment_by_id, dislike_comment_by_id, \
     like_comment_by_id
 from app.main.namespaces.models_definition import get_new_comment_model, get_comment_model, \
-    get_comment_with_comments_model
+    get_comment_with_comments_model, get_like_dislike_score_model
 from app.main.util.auth_decorator import login_required
 
 api = Namespace('Comments', description="User's comments framework")
@@ -54,6 +54,7 @@ class GetCommentWithComments(Resource):
 @api.param('comment_id', 'The Comment identifier')
 class LikePost(Resource):
     @login_required(api)
+    @api.marshal_with(get_like_dislike_score_model(api))
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(210, 'liked comment')
@@ -68,6 +69,7 @@ class LikePost(Resource):
 @api.param('comment_id', 'The Comment identifier')
 class DislikePost(Resource):
     @login_required(api)
+    @api.marshal_with(get_like_dislike_score_model(api))
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find comment')
     @api.response(210, 'disliked comment')

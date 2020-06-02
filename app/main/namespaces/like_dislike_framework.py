@@ -1,59 +1,47 @@
 from app.main import db
+from app.main.model.likes import Likes
+from app.main.model.dislikes import Dislikes
 
 
 def like_content(user, content):
-    if content == user.liked_content.filter_by(id=content.id).first():
-        user.liked_content.remove(content)
+    like = Likes.query.filter(Likes.user_id == user.id, Likes.content_id == content.id).first()
+
+    if like != None:
+        db.session.delete(like)
         db.session.commit()
 
-        response_object = {
-            'status': 'success',
-            'message': "User removed like from content {}".format(content.id),
-        }
-        return response_object, 211
-    elif content == user.disliked_content.filter_by(id=content.id).first():
-        user.disliked_content.remove(content)
-        response_object = {
-            'status': 'success',
-            'message': "User removed dislike and liked content {}".format(content.id),
-        }
-        user.liked_content.append(content)
-        db.session.commit()
-        return response_object, 212
+        return content, 211
     else:
-        response_object = {
-            'status': 'success',
-            'message': "User liked content {}".format(content.id),
-        }
-        user.liked_content.append(content)
+        db.session.add(Likes(user=user, content=content))
         db.session.commit()
-        return response_object, 210
+
+        dislike = Dislikes.query.filter(Dislikes.user_id == user.id, Dislikes.content_id == content.id).first()
+        if dislike != None:
+            db.session.delete(dislike)
+            db.session.commit()
+
+            return content, 212
+
+        return content, 210
 
 
 def dislike_content(user, content):
-    if content == user.disliked_content.filter_by(id=content.id).first():
-        user.disliked_content.remove(content)
+    dislike = Dislikes.query.filter(Dislikes.user_id == user.id, Dislikes.content_id == content.id).first()
+
+    if dislike != None:
+        db.session.delete(dislike)
         db.session.commit()
 
-        response_object = {
-            'status': 'success',
-            'message': "User removed dislike from content {}".format(content.id),
-        }
-        return response_object, 211
-    elif content == user.liked_content.filter_by(id=content.id).first():
-        user.liked_content.remove(content)
-        response_object = {
-            'status': 'success',
-            'message': "User removed like and disliked content {}".format(content.id),
-        }
-        user.disliked_content.append(content)
-        db.session.commit()
-        return response_object, 212
+        return content, 211
     else:
-        response_object = {
-            'status': 'success',
-            'message': "User disliked content {}".format(content.id),
-        }
-        user.disliked_content.append(content)
+        db.session.add(Dislikes(user=user, content=content))
         db.session.commit()
-        return response_object, 210
+
+        like = Likes.query.filter(Likes.user_id == user.id, Likes.content_id == content.id).first()
+        if like != None:
+            db.session.delete(like)
+            db.session.commit()
+
+            return content, 212
+
+        return content, 210

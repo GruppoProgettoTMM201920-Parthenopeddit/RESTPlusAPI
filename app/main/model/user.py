@@ -4,9 +4,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.main import db
 from app.main.model.course import Course
-from app.main.model.dislikes import dislikes
+from app.main.model.dislikes import Dislikes
 from app.main.model.group import Group
-from app.main.model.likes import likes
+from app.main.model.likes import Likes
 from app.main.model.post import Post
 from app.main.model.user_follows_course import user_follows_course
 
@@ -15,8 +15,8 @@ class User(db.Model):
     __tablename__ = 'user'
 
     # DATA COLUMNS
-    id = db.Column(db.String, primary_key=True, autoincrement=False)
-    display_name = db.Column(db.String(32), index=True, unique=True, nullable=True)
+    id = db.Column(db.String(255), primary_key=True, autoincrement=False)
+    display_name = db.Column(db.String(255), unique=True, nullable=True)
     registered_on = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # RELATIONSHIPS
@@ -26,15 +26,13 @@ class User(db.Model):
         lazy='dynamic'
     )
     liked_content = db.relationship(
-        'Content',
-        secondary=likes,
-        back_populates='liked_by_users',
+        'Likes',
+        back_populates='user',
         lazy='dynamic'
     )
     disliked_content = db.relationship(
-        'Content',
-        secondary=dislikes,
-        back_populates='disliked_by_users',
+        'Dislikes',
+        back_populates='user',
         lazy='dynamic'
     )
     followed_courses = db.relationship(

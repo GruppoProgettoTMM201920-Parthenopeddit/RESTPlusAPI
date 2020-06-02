@@ -7,7 +7,7 @@ class UsersChat(Chat):
 
     # DATA COLUMNS
     id = db.Column(db.Integer, db.ForeignKey('chat.id'), primary_key=True, autoincrement=True)
-    of_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    of_user_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
     last_opened_on = db.Column(db.DateTime, nullable=True)
     other_user_chat_id = db.Column(db.Integer, db.ForeignKey('users_chat.id'))
 
