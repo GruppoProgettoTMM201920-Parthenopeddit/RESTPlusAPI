@@ -1,8 +1,9 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app.main import db
+from app.main import db, whooshee
 
 
+@whooshee.register_model('name')
 class Board(db.Model):
     __tablename__ = 'board'
 

@@ -165,8 +165,12 @@ def make_owner(group, request):
 
 
 def get_group_posts(group, per_page, page):
-    # TODO Paginated results
-    return group.posts.all(), 200
+    return group.posts.order_by(
+        Post.timestamp.desc()
+    ).paginate(
+        per_page=per_page,
+        page=page
+    ).items, 200
 
 
 def publish_post_to_group(user, group, request):
@@ -213,7 +217,7 @@ def send_message(user, group, request):
     return new_message, 201
 
 # TODO
-#   MAKE THIS SUBSEQUENT CONCURRENT
+#   MAKE NEXT METHODS CONCURRENT
 
 
 def __make_owners(group, new_owners_id_list):

@@ -6,7 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from .board import Board
 from .review import Review
 from .user_follows_course import user_follows_course
-from .. import db
+from app.main import db
 
 
 class Course(Board):

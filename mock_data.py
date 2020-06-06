@@ -28,6 +28,8 @@ def populate_db():
     db.session.add(post1)
     post2 = Post(author=user2, title="post 1 di user2", body="Hello world")
     db.session.add(post2)
+    post3 = Post(author=user3, title="post 1 di user3", body="Hello world 2")
+    db.session.add(post3)
 
     comment1 = Comment(author=user3, body="Test commento top level a post 1", commented_content=post1, root_content=post1)
     db.session.add(comment1)
@@ -57,6 +59,11 @@ def populate_db():
 
     course1.followers.append(user2)
     course1.followers.append(user3)
+
+    course2 = Course(name="Corso di test. do not use")
+    db.session.add(course2)
+
+    course2.followers.append(user1)
 
     review1 = Review(author=user2, reviewed_course=course1, body="Il miglior corso di sempre", score_liking=5, score_difficulty=3)
     db.session.add(review1)
@@ -89,5 +96,8 @@ def populate_db():
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
     db.session.add(Post(author=user2, title="user1 cant see this", body="Nothing to see for you, user1 hahaha", posted_to_board=group1))
+
+    like3 = Likes(user=user1, content=post3)
+    db.session.add(like3)
 
     db.session.commit()

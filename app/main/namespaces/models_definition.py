@@ -21,8 +21,6 @@ content_base_mapping = {
     'likes_num': fields.Integer(description='number of likes received'),
     'dislikes_num': fields.Integer(description='number of dislikes received'),
     'type': fields.String(description='Content type (Post, Comment, Review)'),
-    'user_liked_content': fields.Boolean(),
-    'user_disliked_content': fields.Boolean(),
 }
 
 post_fields_mapping = {
@@ -70,6 +68,7 @@ page_selection_mapping = {
 board_mapping = {
     'id': fields.Integer(description='ID of the board'),
     'name': fields.String(description='Name descriptor'),
+    'type': fields.String()
 }
 group_fields_mapping = {
     'created_on': fields.DateTime(description='Date on which the group has been created'),
@@ -104,6 +103,14 @@ like_dislike_score_mapping = {
     'dislikes_num': fields.Integer(description='number of dislikes received'),
 }
 
+course_fields_mapping = {
+    'followers_num': fields.Integer(),
+    'reviews_count': fields.Integer(),
+    'average_difficulty_score': fields.Float,
+    'average_liking_score': fields.Float
+}
+course_mapping = dict(board_mapping, **course_fields_mapping)
+
 
 def get_like_dislike_score_model(api):
     return api.model('like and dislike score', like_dislike_score_mapping)
@@ -134,8 +141,7 @@ def get_board_model(api):
 
 
 def get_course_model(api):
-    # TODO create course model
-    return api.model('course', board_mapping)
+    return api.model('course', course_mapping)
 
 
 def get_post_model(api):

@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 
+from sqlalchemy import literal
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app.main import db
+from app.main import db, whooshee
 from app.main.model.course import Course
 from app.main.model.dislikes import Dislikes
 from app.main.model.group import Group
@@ -11,6 +12,7 @@ from app.main.model.post import Post
 from app.main.model.user_follows_course import user_follows_course
 
 
+@whooshee.register_model('id', 'display_name')
 class User(db.Model):
     __tablename__ = 'user'
 
@@ -86,3 +88,12 @@ class User(db.Model):
                 Post.posted_to_board_id == None
             )
         )
+
+    # def get_courses_with_followed_flag(self):
+    #     return Course.query.join(User.followed_courses).filter(User.id == self.id).with_entities(
+    #         Course, literal(True).label('followed')
+    #     ).union(
+    #         Course.query.outerjoin(User.followed_courses).filter(User.id != self.id).with_entities(
+    #             Course, literal(False).label('followed')
+    #         )
+    #     ).all()

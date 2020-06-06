@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
 
-from sqlalchemy.ext.hybrid import hybrid_property
+import sqlalchemy
+from sqlalchemy import literal, cast, func, or_
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.orm import query_expression
 
+from app.main import db
 from app.main.model.dislikes import Dislikes
 from app.main.model.likes import Likes
-from .. import db
 
 
 class Content(db.Model):
@@ -59,6 +62,33 @@ class Content(db.Model):
     @hybrid_property
     def dislikes_num(self):
         return self.dislikes.count()
+
+    @hybrid_method
+    def liked(self, user):
+        return db.session.query(
+            Content.query.filter(Content.id == self.id).join(Likes).filter(Likes.user_id == user.id).exists()
+        ).scalar()
+
+    @hybrid_method
+    def disliked(self, user):
+        return db.session.query(
+            Content.query.filter(Content.id == self.id).join(Dislikes).filter(Dislikes.user_id == user.id).exists()
+        ).scalar()
+
+    @staticmethod
+    def get_content_with_user_data(content_query, user):
+        return content_query.outerjoin(Likes).filter(
+            or_(Likes.user_id == user.id, Likes.user_id == None)
+        ).outerjoin(Dislikes).filter(
+            or_(Dislikes.user_id == user.id, Dislikes.user_id == None)
+        ).with_entities(
+            Content,
+            cast(func.count(Likes.user_id), sqlalchemy.Boolean).label('liked'),
+            cast(func.count(Dislikes.user_id), sqlalchemy.Boolean).label('disliked')
+        ).group_by(
+            Content.id
+        )
+
 
     # INHERITANCE
     type = db.Column(db.String(255))

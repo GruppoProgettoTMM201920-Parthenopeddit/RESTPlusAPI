@@ -1,7 +1,13 @@
+import sqlalchemy
+from sqlalchemy import or_, cast, func
+
 from app.main.model.content import Content
-from app.main import db
+from app.main import db, whooshee
+from app.main.model.dislikes import Dislikes
+from app.main.model.likes import Likes
 
 
+@whooshee.register_model('title')
 class Post(Content):
     __tablename__ = "post"
 
