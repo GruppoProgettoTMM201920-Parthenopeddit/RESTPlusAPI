@@ -100,4 +100,34 @@ def populate_db():
     like3 = Likes(user=user1, content=post3)
     db.session.add(like3)
 
+    u1_c_2 = UsersChat(of_user=user1)
+    u2_c_1 = UsersChat(of_user=user2)
+
+    u1_c_2.other_user_chat = u2_c_1
+    u2_c_1.other_user_chat = u1_c_2
+
+    db.session.add(u1_c_2)
+    db.session.add(u2_c_1)
+
+    u1_c_3 = UsersChat(of_user=user1)
+    u3_c_1 = UsersChat(of_user=user3)
+
+    u1_c_3.other_user_chat = u3_c_1
+    u3_c_1.other_user_chat = u1_c_3
+
+    db.session.add(u1_c_3)
+    db.session.add(u3_c_1)
+
+    db.session.commit()
+
+    m1 = Message(sender_user=user1, receiver_chat=u2_c, body="Hello", timestamp=datetime(2020, 6, 7, 10, 10, 10))
+    m2 = Message(sender_user=user2, receiver_chat=u1_c, body="Oh, hi", timestamp=datetime(2020, 6, 7, 10, 11, 7))
+    m3 = Message(sender_user=user1, receiver_chat=u2_c, body="èRF,E,EèF", timestamp=datetime(2020, 6, 7, 10, 11, 9))
+    m4 = Message(sender_user=user2, receiver_chat=u1_c, body="yes", timestamp=datetime(2020, 6, 7, 10, 11, 30))
+
+    db.session.add(m1)
+    db.session.add(m2)
+    db.session.add(m3)
+    db.session.add(m4)
+
     db.session.commit()
