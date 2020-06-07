@@ -1,13 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import literal
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from app.main import db, whooshee
 from app.main.model.course import Course
-from app.main.model.dislikes import Dislikes
 from app.main.model.group import Group
-from app.main.model.likes import Likes
 from app.main.model.post import Post
 from app.main.model.user_follows_course import user_follows_course
 
