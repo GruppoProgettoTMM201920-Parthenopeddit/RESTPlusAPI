@@ -7,6 +7,8 @@ from app.main.model.course import Course
 from app.main.model.group import Group
 from app.main.model.post import Post
 from app.main.model.user_follows_course import user_follows_course
+from app.main.model.content import Content
+from app.main.model.users_chat import UsersChat
 
 
 @whooshee.register_model('id', 'display_name')
@@ -102,6 +104,15 @@ class User(db.Model):
                 Post.posted_to_board_id == None
             )
         )
+
+    @hybrid_method
+    def chat_with_user(self, other_user):
+        other_user_chats = other_user.chats_with_users.subquery('other_user_chats', True)
+
+        return self.chats_with_users.join(
+            other_user_chats,
+            UsersChat.other_user_chat_id == other_user_chats.c.users_chat_id
+        ).with_entities(UsersChat).one()
 
     # def get_courses_with_followed_flag(self):
     #     return Course.query.join(User.followed_courses).filter(User.id == self.id).with_entities(
