@@ -5,6 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.main import db
 from app.main.model.chat import Chat
+from app.main.model.message import Message
 
 
 class UsersChat(Chat):
@@ -29,6 +30,18 @@ class UsersChat(Chat):
         post_update=True,
         cascade="delete"
     )
+
+    @hybrid_property
+    def sent_messages(self):
+        return self.other_user_chat.received_messages
+
+    @hybrid_property
+    def last_message(self):
+        return self.received_messages.union(
+            self.sent_messages
+        ).order_by(
+            desc(Message.timestamp)
+        ).limit(1).one()
 
     # INHERITANCE
     __mapper_args__ = {
