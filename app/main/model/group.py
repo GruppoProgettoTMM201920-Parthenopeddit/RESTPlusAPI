@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -11,7 +11,7 @@ class Group(Board):
 
     # DATA COLUMNS
     id = db.Column(db.Integer, db.ForeignKey('board.id'), primary_key=True)
-    created_on = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_on = db.Column(db.DateTime, default=datetime.utcnow)
 
     # RELATIONSHIPS
     chat = db.relationship(

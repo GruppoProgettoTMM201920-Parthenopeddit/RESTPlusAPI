@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from app.main import db
 
@@ -9,7 +9,7 @@ class Message(db.Model):
     # DATA COLUMNS
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.Text(4294000000), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     replies_to_message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=True)
 
@@ -32,5 +32,3 @@ class Message(db.Model):
         'Message',
         remote_side='[Message.id]'
     )
-
-    # TODO ADD SELF REFERENCING RELATIONSHIP AND HYBRID DATA TO OTHER CLASSES

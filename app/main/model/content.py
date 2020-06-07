@@ -16,7 +16,7 @@ class Content(db.Model):
     # DATA COLUMNS
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.Text(4294000000), nullable=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     # FOREIGN KEYS COLUMNS
     author_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import literal
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -19,7 +19,7 @@ class User(db.Model):
     # DATA COLUMNS
     id = db.Column(db.String(255), primary_key=True, autoincrement=False)
     display_name = db.Column(db.String(255), unique=True, nullable=True)
-    registered_on = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    registered_on = db.Column(db.DateTime, default=datetime.utcnow)
 
     # RELATIONSHIPS
     published_content = db.relationship(
