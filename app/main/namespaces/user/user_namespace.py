@@ -1,7 +1,8 @@
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_complete_user_model, get_post_model
-from app.main.namespaces.user.user_services import get_user_data, get_user_feed
+from app.main.namespaces.models_definition import get_complete_user_model, get_post_model, get_review_model
+from app.main.namespaces.user.user_services import get_user_data, get_user_feed, get_user_posts, get_user_reviews, \
+    get_user_comments
 from app.main.util.auth_decorator import login_required
 
 api = Namespace('User', description="User's specific actions framework")
@@ -14,8 +15,7 @@ api = Namespace('User', description="User's specific actions framework")
 #   get num dislikes
 #   get published content
 
-@api.route("/", defaults={'fetched_user_id': None})
-@api.route("/<string:fetched_user_id>", endpoint="/")
+@api.route("/<string:fetched_user_id>")
 @api.param('fetched_user_id', 'ID of user to fetch')
 class UserData(Resource):
     @login_required(api)
@@ -23,6 +23,42 @@ class UserData(Resource):
     def get(self, user, fetched_user_id):
         """Fetch user data"""
         return get_user_data(user, fetched_user_id)
+
+
+@api.route("/<string:fetched_user_id>/published_posts/", defaults={'per_page': 20, 'page': 1})
+@api.route("/<string:fetched_user_id>/published_posts/<int:page>", defaults={'per_page': 20})
+@api.route("/<string:fetched_user_id>/published_posts/<int:per_page>/<int:page>")
+@api.param('fetched_user_id', 'ID of user to fetch')
+class UserPosts(Resource):
+    @login_required(api)
+    @api.marshal_with(get_post_model(api))
+    def get(self, user, fetched_user_id, per_page, page):
+        """Fetch user published posts"""
+        return get_user_posts(user, fetched_user_id, per_page, page)
+
+
+@api.route("/<string:fetched_user_id>/published_reviews/", defaults={'per_page': 20, 'page': 1})
+@api.route("/<string:fetched_user_id>/published_reviews/<int:page>", defaults={'per_page': 20})
+@api.route("/<string:fetched_user_id>/published_reviews/<int:per_page>/<int:page>")
+@api.param('fetched_user_id', 'ID of user to fetch')
+class UserReviews(Resource):
+    @login_required(api)
+    @api.marshal_with(get_review_model(api))
+    def get(self, user, fetched_user_id, per_page, page):
+        """Fetch user published posts"""
+        return get_user_reviews(user, fetched_user_id, per_page, page)
+
+
+@api.route("/<string:fetched_user_id>/published_comments/", defaults={'per_page': 20, 'page': 1})
+@api.route("/<string:fetched_user_id>/published_comments/<int:page>", defaults={'per_page': 20})
+@api.route("/<string:fetched_user_id>/published_comments/<int:per_page>/<int:page>")
+@api.param('fetched_user_id', 'ID of user to fetch')
+class UserComments(Resource):
+    @login_required(api)
+    @api.marshal_with(get_post_model(api))
+    def get(self, user, fetched_user_id, per_page, page):
+        """Fetch user published posts"""
+        return get_user_comments(user, fetched_user_id, per_page, page)
 
 
 @api.route("/feed/", defaults={'per_page': 20, 'page': 1})
