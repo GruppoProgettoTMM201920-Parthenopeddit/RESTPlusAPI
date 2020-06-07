@@ -17,6 +17,7 @@ FCM_PROXY_DICT = {
 
 
 class Config:
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY', 'my_precious_secret_key')
     DEBUG = False
 
@@ -40,6 +41,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db'))
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 config_by_name = dict(

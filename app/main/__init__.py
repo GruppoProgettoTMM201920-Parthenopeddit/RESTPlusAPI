@@ -19,6 +19,7 @@ whooshee = Whooshee()
 def create_app(config_name):
     app = Flask(__name__)
     configuration = config_by_name[config_name]
+    print(config_name)
     app.config.from_object(configuration)
 
     db.init_app(app)
