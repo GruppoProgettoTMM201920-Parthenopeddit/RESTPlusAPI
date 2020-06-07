@@ -77,11 +77,16 @@ class User(db.Model):
 
     # QUERY
     def get_posts_feed(self):
-        return Post.query.filter(
-            Post.posted_to_board_id.in_(
-                self.groups.with_entities(Group.id).union(
-                    self.followed_courses.with_entities(Course.id)
-                )
+        joined_groups_sq = self.joined_groups.subquery('joined_groups', True)
+        followed_courses_sq = self.followed_courses.subquery('followed_courses', True)
+
+        return Post.query.join(
+            joined_groups_sq,
+            Post.posted_to_board_id == joined_groups_sq.c.group_id
+        ).union(
+            Post.query.join(
+            followed_courses_sq,
+            Post.posted_to_board_id == followed_courses_sq.c.course_id
             )
         ).union(
             Post.query.filter(
