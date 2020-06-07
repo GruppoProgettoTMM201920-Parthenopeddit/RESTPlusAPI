@@ -75,7 +75,19 @@ class User(db.Model):
     def joined_groups(self):
         return self.groups.join(Group).with_entities(Group)
 
-    # QUERY
+    @hybrid_property
+    def published_posts(self):
+        return self.published_content.filter(Content.type == 'post')
+
+    @hybrid_property
+    def published_reviews(self):
+        return self.published_content.filter(Content.type == 'review')
+
+    @hybrid_property
+    def published_comments(self):
+        return self.published_content.filter(Content.type == 'comment')
+
+    @hybrid_property
     def get_posts_feed(self):
         joined_groups_sq = self.joined_groups.subquery('joined_groups', True)
         followed_courses_sq = self.followed_courses.subquery('followed_courses', True)
