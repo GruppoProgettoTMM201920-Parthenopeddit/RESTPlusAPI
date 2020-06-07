@@ -1,9 +1,9 @@
+from app.main import db
 from app.main.model.board import Board
 from app.main.model.course import Course
-from app.main import db
 from app.main.model.post import Post
-from app.main.util.extract_resource import extract_resource
 from app.main.model.review import Review
+from app.main.util.extract_resource import extract_resource
 
 
 def search_course(course_name):

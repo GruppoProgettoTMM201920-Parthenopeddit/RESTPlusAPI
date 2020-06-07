@@ -3,12 +3,12 @@ from flask_restplus import Api
 
 from app.main.namespaces.auth.auth_namespace import api as auth_namespace
 from app.main.namespaces.comments.comments_namespace import api as comments_namespace
+from app.main.namespaces.courses.courses_namespace import api as courses_namespace
+from app.main.namespaces.groups.groups_namespace import api as groups_namespace
+from app.main.namespaces.messages.messages_namespace import api as messages_namespace
 from app.main.namespaces.posts.posts_namespace import api as post_namespace
 from app.main.namespaces.reviews.reviews_namespace import api as reviews_namespace
 from app.main.namespaces.user.user_namespace import api as user_namespace
-from app.main.namespaces.groups.groups_namespace import api as groups_namespace
-from app.main.namespaces.courses.courses_namespace import api as courses_namespace
-from app.main.namespaces.messages.messages_namespace import api as messages_namespace
 
 blueprint = Blueprint('api', __name__)
 authorizations = {

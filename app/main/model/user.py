@@ -3,11 +3,10 @@ from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from app.main import db, whooshee
-from app.main.model.course import Course
+from app.main.model.content import Content
 from app.main.model.group import Group
 from app.main.model.post import Post
 from app.main.model.user_follows_course import user_follows_course
-from app.main.model.content import Content
 from app.main.model.users_chat import UsersChat
 
 

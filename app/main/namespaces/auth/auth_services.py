@@ -1,7 +1,7 @@
 from app.main import db
+from app.main.model.device_token import DeviceToken
 from app.main.model.user import User
 from app.main.util.UniparthenopeAPI.requests import login_request
-from app.main.model.device_token import DeviceToken
 from app.main.util.extract_resource import extract_resource
 
 

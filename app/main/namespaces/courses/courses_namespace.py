@@ -1,12 +1,12 @@
 from flask import request
-from flask_restplus import Namespace, Resource, fields
+from flask_restplus import Namespace, Resource
 
-from app.main.util.auth_decorator import login_required
 from app.main.namespaces.courses.courses_services import search_course, get_user_groups, get_course_by_id, \
     follow_course, unfollow_course, get_course_posts, publish_post_to_course, get_course_followers, get_course_reviews, \
     publish_review_to_course
 from app.main.namespaces.models_definition import get_course_model, get_post_model, get_new_post_model, \
     get_simple_user_model, get_review_model, get_new_review_model
+from app.main.util.auth_decorator import login_required
 
 api = Namespace('Courses', description="Uniparthenope courses framework")
 

@@ -1,6 +1,6 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
-from sqlalchemy import func, desc
+from sqlalchemy import desc
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.main import db

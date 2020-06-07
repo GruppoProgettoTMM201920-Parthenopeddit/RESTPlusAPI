@@ -1,5 +1,5 @@
-from app.main.model.user import User
 from app.main.model.post import Post
+from app.main.model.user import User
 
 
 def get_user_data(user, fetched_user_id):

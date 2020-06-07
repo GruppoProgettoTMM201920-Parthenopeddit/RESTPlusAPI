@@ -1,7 +1,6 @@
 from app.main import db
 from app.main.model.course import Course
 from app.main.model.review import Review
-from app.main.model.user import User
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
 from app.main.util.extract_resource import extract_resource
 

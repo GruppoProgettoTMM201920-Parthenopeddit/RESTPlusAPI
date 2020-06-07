@@ -1,5 +1,3 @@
-import os
-
 import requests
 
 from config import BYPASS_LOGIN

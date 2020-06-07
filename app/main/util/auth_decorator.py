@@ -2,9 +2,9 @@ from functools import wraps
 
 from flask import request
 
+from app.main.model.user import User
 from app.main.util.UniparthenopeAPI.requests import token_is_valid
 from app.main.util.token_encoding import token_decode_username
-from app.main.model.user import User
 
 
 def token_required(f):

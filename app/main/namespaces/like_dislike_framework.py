@@ -1,6 +1,6 @@
 from app.main import db
-from app.main.model.likes import Likes
 from app.main.model.dislikes import Dislikes
+from app.main.model.likes import Likes
 
 
 def like_content(user, content):

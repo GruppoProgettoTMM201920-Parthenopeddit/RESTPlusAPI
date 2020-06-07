@@ -1,12 +1,10 @@
-from statistics import mean
-
-from sqlalchemy import select, func
+from sqlalchemy import func
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from app.main import db
 from .board import Board
 from .review import Review
 from .user_follows_course import user_follows_course
-from app.main import db
 
 
 class Course(Board):

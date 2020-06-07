@@ -1,13 +1,11 @@
-import json
-
 from app.main import db
 from app.main.model.group import Group
-from app.main.model.user import User
+from app.main.model.group_chat import GroupChat
 from app.main.model.group_invite import GroupInvite
 from app.main.model.group_member import GroupMember
-from app.main.model.group_chat import GroupChat
-from app.main.model.post import Post
 from app.main.model.message import Message
+from app.main.model.post import Post
+from app.main.model.user import User
 from app.main.util.extract_resource import extract_resource
 
 

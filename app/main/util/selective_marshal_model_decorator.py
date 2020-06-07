@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask_restplus import marshal_with, marshal
+from flask_restplus import marshal
 
 models = [{
     'model': "model1",

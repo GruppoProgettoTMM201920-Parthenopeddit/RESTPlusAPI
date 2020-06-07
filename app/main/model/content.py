@@ -1,9 +1,8 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 import sqlalchemy
-from sqlalchemy import literal, cast, func, or_
+from sqlalchemy import cast, func, or_
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy.orm import query_expression
 
 from app.main import db
 from app.main.model.dislikes import Dislikes
