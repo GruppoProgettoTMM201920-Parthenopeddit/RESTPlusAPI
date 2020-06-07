@@ -8,7 +8,7 @@ from app.main.namespaces.groups.groups_services import get_user_groups, create_g
 from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, \
     get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_post_model, get_new_post_model
 from app.main.util.auth_decorator import login_required
-from main.util.selective_marshal_model_decorator import selective_marshal_with
+from app.main.util.selective_marshal_model_decorator import selective_marshal_with
 
 api = Namespace('Groups', description="Users ad-hoc Groups framework")
 
