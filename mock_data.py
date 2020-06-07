@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.main import db
 from app.main.model.comment import Comment
 from app.main.model.course import Course
@@ -117,10 +119,10 @@ def populate_db():
 
     db.session.commit()
 
-    m1 = Message(sender_user=user1, receiver_chat=u2_c, body="Hello", timestamp=datetime(2020, 6, 7, 10, 10, 10))
-    m2 = Message(sender_user=user2, receiver_chat=u1_c, body="Oh, hi", timestamp=datetime(2020, 6, 7, 10, 11, 7))
-    m3 = Message(sender_user=user1, receiver_chat=u2_c, body="èRF,E,EèF", timestamp=datetime(2020, 6, 7, 10, 11, 9))
-    m4 = Message(sender_user=user2, receiver_chat=u1_c, body="yes", timestamp=datetime(2020, 6, 7, 10, 11, 30))
+    m1 = Message(sender_user=user1, receiver_chat=u2_c_1, body="Hello", timestamp=datetime(2020, 6, 7, 10, 10, 10))
+    m2 = Message(sender_user=user2, receiver_chat=u1_c_2, body="Oh, hi", timestamp=datetime(2020, 6, 7, 10, 11, 7))
+    m3 = Message(sender_user=user1, receiver_chat=u2_c_1, body="èRF,E,EèF", timestamp=datetime(2020, 6, 7, 10, 11, 9))
+    m4 = Message(sender_user=user2, receiver_chat=u1_c_2, body="yes", timestamp=datetime(2020, 6, 7, 10, 11, 30))
 
     db.session.add(m1)
     db.session.add(m2)
