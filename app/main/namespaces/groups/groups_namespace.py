@@ -9,6 +9,7 @@ from app.main.namespaces.models_definition import get_user_group_model, get_new_
     get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_post_model, get_new_post_model, \
     get_message_model, get_new_message_model
 from app.main.namespaces.groups.group_decorator import require_group_membership, require_group_ownership
+from main.util.selective_marshal_model_decorator import selective_marshal_with
 
 api = Namespace('Groups', description="Users ad-hoc Groups framework")
 
@@ -23,10 +24,23 @@ class Groups(Resource):
         return get_user_groups(user)
 
     @login_required(api)
-    @api.marshal_list_with(get_group_invite_model(api), code=201, description='Successfully created group')
+    #@api.marshal_list_with(get_group_model(api), code=201, description='Successfully created group')
+    #@api.marshal_list_with(get_group_invite_model(api), code=202, description='Successfully created group, and invited members')
+    @selective_marshal_with([
+        {
+            'model': get_group_model(api),
+            'code': 201,
+            'list': False
+        }, {
+            'model': get_group_invite_model(api),
+            'code': 202,
+            'list': False
+        }
+    ])
     @api.expect(get_new_group_model(api))
     @api.response(300, 'Invalid payload. group name needed.')
-    @api.response(201, 'Successfully created group')
+    @api.response(201, 'Successfully created group', model=get_group_model(api))
+    @api.response(202, 'Successfully created group, and invited members', model=get_group_invite_model(api))
     def post(self, user):
         """Create new group"""
         return create_group(user, request)

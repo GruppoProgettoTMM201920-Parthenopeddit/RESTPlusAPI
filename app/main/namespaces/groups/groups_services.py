@@ -34,7 +34,7 @@ def create_group(user, request):
     db.session.commit()
 
     try:
-        users_list = json.loads(extract_resource(request, 'invited_members'))
+        users_list = extract_resource(request, 'invited_members')
 
         # TODO
         #   SEND ALL GROUP INVITES IN WORKER THREAD
@@ -43,12 +43,17 @@ def create_group(user, request):
             group=new_group,
             invited_users_id_list=users_list
         )
-        db.session.add_all(invites)
-        db.session.commit()
 
-        return invites, 201
+        if len(invites) > 0:
+            db.session.add_all(invites)
+            db.session.commit()
+
+            return invites, 202
+        else:
+            raise Exception()
     except:
-        return [], 201
+        print("exception raised")
+        return new_group, 201
 
 
 def get_user_group_invites(user):
@@ -95,7 +100,7 @@ def leave_group(user, group):
 
 def invite_member(user, group, request):
     try:
-        users_list = json.loads(extract_resource(request, 'users_list'))
+        users_list = extract_resource(request, 'users_list')
     except:
         return {}, 400
 
@@ -149,7 +154,7 @@ def get_group_members(group):
 
 def make_owner(group, request):
     try:
-        users_list = json.loads(extract_resource(request, 'users_list'))
+        users_list = extract_resource(request, 'users_list')
     except:
         return {}, 400
 
