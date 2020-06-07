@@ -72,6 +72,7 @@ board_mapping = {
 }
 group_fields_mapping = {
     'created_on': fields.DateTime(description='Date on which the group has been created'),
+    'members_num': fields.Integer(),
 }
 group_mapping = dict(board_mapping, **group_fields_mapping)
 group_member_mapping = {
