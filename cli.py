@@ -5,7 +5,7 @@ import unittest
 
 from flask_migrate import init, migrate, upgrade
 
-from mock_data import populate_db, wipe_db
+from mock_data import populate_db
 
 
 def register(app):
@@ -43,11 +43,6 @@ def register(app):
     def populatedb():
         """Populates the database with mockdata"""
         populate_db()
-
-    @app.cli.command("wipedb")
-    def wipedb():
-        """Wipes database clean, preserving schema"""
-        wipe_db()
 
     def delete_db():
         def errorRemoveReadonly(func, path, exc):

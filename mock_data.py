@@ -14,32 +14,6 @@ from app.main.model.review import Review
 from app.main.model.user import User
 from app.main.model.users_chat import UsersChat
 
-#TODO CHECK WHY NOT WORKING
-def wipe_db():
-    pending = db.metadata.sorted_tables
-
-    prev_delete_count = 0
-
-    condition = True
-    while condition:
-        curr_delete_count = 0
-        active = pending
-        pending = []
-        for table in active:
-            try:
-                db.session.execute(table.delete())
-                curr_delete_count += 1
-            except:
-                pending.append(table)
-
-        condition = len(pending) > 0 and not (prev_delete_count == 0 and curr_delete_count == 0)
-        prev_delete_count = curr_delete_count
-
-    if len(pending) > 0:
-        raise Exception("Error in wiping data")
-    else:
-        db.session.commit()
-
 
 def populate_db():
     user1 = User(id="user1")
