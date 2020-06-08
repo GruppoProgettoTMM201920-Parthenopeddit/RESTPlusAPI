@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.main import db
+from app.main import db, whooshee
 from app.main.model.comment import Comment
 from app.main.model.course import Course
 from app.main.model.group import Group
@@ -128,3 +128,4 @@ def populate_db():
     db.session.add(m4)
 
     db.session.commit()
+    whooshee.reindex()

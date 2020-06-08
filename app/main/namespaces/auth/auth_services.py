@@ -1,4 +1,4 @@
-from app.main import db
+from app.main import db, whooshee
 from app.main.model.device_token import DeviceToken
 from app.main.model.user import User
 from app.main.util.UniparthenopeAPI.requests import login_request
@@ -13,6 +13,7 @@ def login(token, user_id):
             new_user = User(id=user_id)
             db.session.add(new_user)
             db.session.commit()
+            whooshee.reindex()
             return new_user, 201
         else:
             return user, 200

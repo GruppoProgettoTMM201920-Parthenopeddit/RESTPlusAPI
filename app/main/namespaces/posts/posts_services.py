@@ -1,4 +1,4 @@
-from app.main import db
+from app.main import db, whooshee
 from app.main.model.board import Board
 from app.main.model.post import Post
 from app.main.namespaces.content_accessibility import is_post_accessible
@@ -44,6 +44,7 @@ def save_new_post(user, request):
 
     db.session.add(new_post)
     db.session.commit()
+    whooshee.reindex()
 
     return new_post, 201
 
