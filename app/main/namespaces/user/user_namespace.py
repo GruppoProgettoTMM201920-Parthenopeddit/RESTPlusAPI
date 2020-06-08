@@ -1,12 +1,22 @@
 from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.models_definition import get_complete_user_model, get_post_model, get_review_model, \
-    get_comment_model
+    get_comment_model, get_simple_user_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed, get_user_posts, get_user_reviews, \
-    get_user_comments
+    get_user_comments, search_user
 from app.main.util.auth_decorator import login_required
 
 api = Namespace('User', description="User's specific actions framework")
+
+
+@api.route("/search/<string:searched_user_id>")
+@api.param('searched_user_id', 'ID of user to search')
+class SearchUser(Resource):
+    @login_required(api)
+    @api.marshal_list_with(get_simple_user_model(api))
+    def get(self, user, searched_user_id):
+        """Search user by ID"""
+        return search_user(user, searched_user_id)
 
 
 # TODO get full user info

@@ -3,10 +3,21 @@ from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.models_definition import get_new_post_model, get_post_model, get_post_with_comments_model, \
     get_like_dislike_score_model
-from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id, dislike_post_by_id, like_post_by_id
+from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id, dislike_post_by_id, like_post_by_id, \
+    search_post
 from app.main.util.auth_decorator import login_required
 
 api = Namespace('Posts', description="User's post framework")
+
+
+@api.route("/search/<string:searched_post_title>")
+@api.param('searched_post_title')
+class SearchPost(Resource):
+    @login_required(api)
+    @api.marshal_list_with(get_post_model(api))
+    def get(self, user, searched_post_title):
+        """Search post by title"""
+        return search_post(user, searched_post_title)
 
 
 @api.route("/")

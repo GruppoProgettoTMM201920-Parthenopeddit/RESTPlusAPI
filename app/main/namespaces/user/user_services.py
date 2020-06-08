@@ -2,6 +2,17 @@ from app.main.model.post import Post
 from app.main.model.user import User
 
 
+def search_user(user, searched_user_id):
+    if len(searched_user_id) < 3:
+        response_object = {
+            'status': 'error',
+            'message': 'search string is too small. need 3 characters minimum',
+        }
+        return response_object, 300
+
+    return User.query.whooshee_search(searched_user_id).all(), 200
+
+
 def get_user_data(user, fetched_user_id):
     if fetched_user_id != user.id:
         fetched_user = User.query.filter(User.id == fetched_user_id).first_or_404()
