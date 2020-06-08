@@ -17,7 +17,7 @@ def search_course(course_name):
     return Board.query.filter(Board.type == 'course').whooshee_search(course_name).all(), 200
 
 
-def get_user_groups(user):
+def get_user_courses(user):
     return user.followed_courses.all(), 200
 
 

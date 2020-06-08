@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.courses.courses_services import search_course, get_user_groups, get_course_by_id, \
+from app.main.namespaces.courses.courses_services import search_course, get_user_courses, get_course_by_id, \
     follow_course, unfollow_course, get_course_posts, publish_post_to_course, get_course_followers, get_course_reviews, \
     publish_review_to_course
 from app.main.namespaces.models_definition import get_course_model, get_post_model, get_new_post_model, \
@@ -25,7 +25,7 @@ class Courses(Resource):
     @login_required(api)
     @api.marshal_list_with(get_course_model(api))
     def get(self, user, **kwargs):
-        return get_user_groups(user)
+        return get_user_courses(user)
 
 
 @api.route("/<int:course_id>")
@@ -46,7 +46,7 @@ class FollowCourse(Resource):
         return get_course_followers(course_id)
 
 
-@api.route("/<int:course_id>/followers/follow")
+@api.route("/<int:course_id>/follow")
 @api.param('course_id')
 class FollowCourse(Resource):
     @login_required(api)
@@ -54,7 +54,7 @@ class FollowCourse(Resource):
         return follow_course(user, course_id)
 
 
-@api.route("/<int:course_id>/followers/unfollow")
+@api.route("/<int:course_id>/unfollow")
 @api.param('course_id')
 class UnfollowCourseByID(Resource):
     @login_required(api)
@@ -70,7 +70,7 @@ class UnfollowCourseByID(Resource):
 @api.param('course_id')
 class CoursePostsByID(Resource):
     @login_required(api)
-    @api.marshal_with(get_post_model(api), code=200, description='Post successfully retrieved')
+    @api.marshal_list_with(get_post_model(api), code=200, description='Post successfully retrieved')
     def get(self, course_id, per_page, page, **kwargs):
         return get_course_posts(course_id, per_page, page)
 
