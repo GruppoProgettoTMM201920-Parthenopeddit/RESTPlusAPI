@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.main import db
@@ -41,7 +41,15 @@ class UsersChat(Chat):
             self.sent_messages
         ).order_by(
             desc(Message.timestamp)
-        ).limit(1).one()
+        ).limit(1).first()
+
+    @hybrid_property
+    def chat_log(self):
+        return self.received_messages.union(
+            self.sent_messages
+        ).order_by(
+            asc(Message.timestamp)
+        )
 
     # INHERITANCE
     __mapper_args__ = {

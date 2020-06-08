@@ -111,7 +111,7 @@ class User(db.Model):
         return self.chats_with_users.join(
             other_user_chats,
             UsersChat.other_user_chat_id == other_user_chats.c.users_chat_id
-        ).with_entities(UsersChat).one()
+        ).with_entities(UsersChat)
 
     # def get_courses_with_followed_flag(self):
     #     return Course.query.join(User.followed_courses).filter(User.id == self.id).with_entities(

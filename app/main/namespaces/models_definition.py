@@ -92,8 +92,6 @@ message_mapping = {
 }
 new_message_mapping = {
     'body': fields.String(description='text of the message'),
-    'replies_to_message_id': fields.Integer(description='Id of message replied to'),
-    'receiver_chat_id': fields.Integer(),
 }
 new_device_token_mapping = {
     'token': fields.String(description='Device token')
@@ -111,6 +109,13 @@ course_fields_mapping = {
     'average_liking_score': fields.Float
 }
 course_mapping = dict(board_mapping, **course_fields_mapping)
+
+user_chat_mapping = {
+    'id': fields.Integer(),
+    'of_user_id': fields.String(),
+    'last_opened_on': fields.DateTime(),
+    'other_user_chat_id': fields.Integer(),
+}
 
 
 def get_like_dislike_score_model(api):
@@ -279,7 +284,6 @@ def __get_simple_message_model(api):
 def get_message_model(api):
     message_model = message_mapping.copy()
     message_model['sender_user'] = fields.Nested(get_simple_user_model(api))
-    message_model['replies_to_message'] = fields.Nested(__get_simple_message_model(api))
     return api.model('message', message_model)
 
 
@@ -289,3 +293,22 @@ def get_new_message_model(api):
 
 def get_new_device_token_model(api):
     return api.model('new device token', new_device_token_mapping)
+
+
+def get_user_chat_model(api, get_other_chat=False):
+    user_chat_model = user_chat_mapping.copy()
+    user_chat_model['of_user'] = fields.Nested(get_simple_user_model(api))
+    if get_other_chat == True:
+        user_chat_model['other_user_chat'] = fields.Nested(get_user_chat_model(api), get_other_chat=False)
+        user_chat_model['last_message'] = fields.Nested(get_message_model(api))
+        return api.model('User chat with user', user_chat_model)
+    else:
+        return api.model('Other user chat with user', user_chat_model)
+
+
+def get_user_chat_model_with_log(api):
+    user_chat_model = user_chat_mapping.copy()
+    user_chat_model['of_user'] = fields.Nested(get_simple_user_model(api))
+    user_chat_model['other_user_chat'] = fields.Nested(get_user_chat_model(api), get_other_chat=False)
+    user_chat_model['chat_log'] = fields.List(fields.Nested(get_message_model(api)))
+    return api.model('User chat log with user', user_chat_model)
