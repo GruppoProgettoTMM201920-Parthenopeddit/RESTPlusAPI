@@ -8,4 +8,4 @@ while true; do
     echo Deploy command failed, retrying in 5 secs...
     sleep 5
 done
-exec gunicorn -b :5000 --certfile cert.pem --keyfile key.pem --worker-tmp-dir /dev/shm --access-logfile - --error-logfile - parthenopeddit:app
+exec gunicorn -b :5000 --worker-tmp-dir /dev/shm --access-logfile - --error-logfile - parthenopeddit:app
