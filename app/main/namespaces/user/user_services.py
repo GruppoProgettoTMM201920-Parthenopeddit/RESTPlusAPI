@@ -1,5 +1,7 @@
 from app.main.model.post import Post
 from app.main.model.user import User
+from app.main.util.extract_resource import extract_resource
+from app.main import db
 
 
 def search_user(user, searched_user_id):
@@ -11,6 +13,18 @@ def search_user(user, searched_user_id):
         return response_object, 300
 
     return User.query.whooshee_search(searched_user_id).all(), 200
+
+
+def change_display_name(user, request):
+    try:
+        new_name = extract_resource(request, 'display_name')
+    except:
+        return {}, 400
+
+    user.display_name = new_name
+    db.session.commit()
+
+    return user, 201
 
 
 def get_user_data(user, fetched_user_id):

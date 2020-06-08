@@ -119,6 +119,10 @@ user_chat_mapping = {
     'other_user_chat_id': fields.Integer(),
 }
 
+new_name_mapping = {
+    'display_name': fields.String()
+}
+
 
 def get_like_dislike_score_model(api):
     return api.model('like and dislike score', like_dislike_score_mapping)
@@ -314,3 +318,6 @@ def get_user_chat_model_with_log(api):
     user_chat_model['other_user_chat'] = fields.Nested(get_user_chat_model(api), get_other_chat=False)
     user_chat_model['chat_log'] = fields.List(fields.Nested(get_message_model(api)))
     return api.model('User chat log with user', user_chat_model)
+
+def get_new_display_name_model(api):
+    return api.model('set display name', new_name_mapping)

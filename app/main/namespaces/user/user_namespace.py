@@ -1,9 +1,10 @@
+from flask import request
 from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.models_definition import get_complete_user_model, get_post_model, get_review_model, \
-    get_comment_model, get_simple_user_model
+    get_comment_model, get_simple_user_model, get_new_display_name_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed, get_user_posts, get_user_reviews, \
-    get_user_comments, search_user
+    get_user_comments, search_user, change_display_name
 from app.main.util.auth_decorator import login_required
 
 api = Namespace('User', description="User's specific actions framework")
@@ -19,12 +20,15 @@ class SearchUser(Resource):
         return search_user(user, searched_user_id)
 
 
-# TODO get full user info
-#   get groups
-#   get courses
-#   get num likes
-#   get num dislikes
-#   get published content
+@api.route("/display_name")
+class SetDisplayName(Resource):
+    @login_required(api)
+    @api.expect(get_new_display_name_model(api))
+    @api.marshal_with(get_simple_user_model(api))
+    def post(self, user):
+        """change user displayed name"""
+        return change_display_name(user, request)
+
 
 @api.route("/<string:fetched_user_id>")
 @api.param('fetched_user_id', 'ID of user to fetch')
