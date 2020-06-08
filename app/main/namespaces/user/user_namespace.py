@@ -1,6 +1,7 @@
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.models_definition import get_complete_user_model, get_post_model, get_review_model
+from app.main.namespaces.models_definition import get_complete_user_model, get_post_model, get_review_model, \
+    get_comment_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed, get_user_posts, get_user_reviews, \
     get_user_comments
 from app.main.util.auth_decorator import login_required
@@ -31,7 +32,7 @@ class UserData(Resource):
 @api.param('fetched_user_id', 'ID of user to fetch')
 class UserPosts(Resource):
     @login_required(api)
-    @api.marshal_with(get_post_model(api))
+    @api.marshal_list_with(get_post_model(api))
     def get(self, user, fetched_user_id, per_page, page):
         """Fetch user published posts"""
         return get_user_posts(user, fetched_user_id, per_page, page)
@@ -43,7 +44,7 @@ class UserPosts(Resource):
 @api.param('fetched_user_id', 'ID of user to fetch')
 class UserReviews(Resource):
     @login_required(api)
-    @api.marshal_with(get_review_model(api))
+    @api.marshal_list_with(get_review_model(api))
     def get(self, user, fetched_user_id, per_page, page):
         """Fetch user published posts"""
         return get_user_reviews(user, fetched_user_id, per_page, page)
@@ -55,7 +56,7 @@ class UserReviews(Resource):
 @api.param('fetched_user_id', 'ID of user to fetch')
 class UserComments(Resource):
     @login_required(api)
-    @api.marshal_with(get_post_model(api))
+    @api.marshal_list_with(get_comment_model(api))
     def get(self, user, fetched_user_id, per_page, page):
         """Fetch user published posts"""
         return get_user_comments(user, fetched_user_id, per_page, page)
