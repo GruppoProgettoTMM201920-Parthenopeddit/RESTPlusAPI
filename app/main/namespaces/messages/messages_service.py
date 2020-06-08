@@ -14,7 +14,7 @@ def __make_users_chat(user1, user2):
     c2.other_user_chat = c1
     db.session.add(c1)
     db.session.add(c2)
-    db.commit()
+    db.session.commit()
 
     return c1
 
