@@ -111,8 +111,8 @@ def publish_review_to_course(user, course_id, request):
 
     try:
         body = extract_resource(request, 'body')
-        score_liking = extract_resource(request, 'score_liking')
-        score_difficulty = extract_resource(request, 'score_difficulty')
+        score_liking = int(extract_resource(request, 'score_liking'))
+        score_difficulty = int(extract_resource(request, 'score_difficulty'))
     except:
         return {}, 400
 

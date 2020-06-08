@@ -6,7 +6,7 @@ from app.main.model.group_member import GroupMember
 from app.main.model.message import Message
 from app.main.model.post import Post
 from app.main.model.user import User
-from app.main.util.extract_resource import extract_resource
+from app.main.util.extract_resource import extract_resource, extract_object_resource
 
 
 def get_user_groups(user):
@@ -32,7 +32,7 @@ def create_group(user, request):
     db.session.commit()
 
     try:
-        users_list = extract_resource(request, 'invited_members')
+        users_list = extract_object_resource(request, 'invited_members')
 
         # TODO
         #   SEND ALL GROUP INVITES IN WORKER THREAD
@@ -98,7 +98,7 @@ def leave_group(user, group):
 
 def invite_member(user, group, request):
     try:
-        users_list = extract_resource(request, 'users_list')
+        users_list = extract_object_resource(request, 'users_list')
     except:
         return {}, 400
 
@@ -124,7 +124,7 @@ def get_group_invites(group):
 
 def answer_to_invite(user, group_id, request):
     try:
-        accepted = extract_resource(request, 'answer')
+        accepted = bool(extract_resource(request, 'answer'))
     except:
         return {}, 400
 
@@ -152,7 +152,7 @@ def get_group_members(group):
 
 def make_owner(group, request):
     try:
-        users_list = extract_resource(request, 'users_list')
+        users_list = extract_object_resource(request, 'users_list')
     except:
         return {}, 400
 
@@ -202,7 +202,7 @@ def send_message(user, group, request):
         return {}, 400
 
     try:
-        replies_to_message_id = extract_resource(request, 'replies_to_message_id')
+        replies_to_message_id = int(extract_resource(request, 'replies_to_message_id'))
     except:
         replies_to_message_id = None
 
