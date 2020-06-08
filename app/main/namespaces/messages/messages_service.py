@@ -20,12 +20,6 @@ def __make_users_chat(user1, user2):
 
 
 def get_user_chats_with_users(user):
-    # DEBUG
-    for userschat in user.chats_with_users.all():
-        print(userschat)
-        print(userschat.of_user)
-        print(userschat.other_user_chat.of_user)
-        print(userschat.last_message)
     return user.chats_with_users.all(), 200
 
 

@@ -89,6 +89,8 @@ message_mapping = {
     'id': fields.Integer(description='Message identifier'),
     'body': fields.String(description='text of the message'),
     'timestamp': fields.DateTime(description='date and time message was sent on'),
+    'sender_id': fields.String(),
+    'receiver_id': fields.Integer(),
 }
 new_message_mapping = {
     'body': fields.String(description='text of the message'),

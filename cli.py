@@ -5,6 +5,7 @@ import unittest
 
 from flask_migrate import init, migrate, upgrade
 
+from app.main import whooshee
 from mock_data import populate_db
 
 
@@ -17,6 +18,10 @@ def register(app):
         if result.wasSuccessful():
             return 0
         return 1
+
+    @app.cli.command("reindex")
+    def reindex():
+        whooshee.reindex()
 
     @app.cli.command("resetdb")
     def resetdb():
