@@ -7,7 +7,7 @@ BYPASS_LOGIN = True
 
 # Your api-key can be gotten from:
 # https://console.firebase.google.com/project/<project-name>/settings/cloudmessaging
-FCM_API_KEY = os.getenv('FCM_API_KEY')
+FCM_API_KEY = os.getenv('FCM_API_KEY', 'AAAAWnKOp40:APA91bGJX8NxPqQAu5Hlw5lzM4VF7pVnYW8OMRNuvn2XoKz2IltZ4JbuyYsmf5Mt3vMBxV5KqjECpRpLDpHhWaba31NvXo7CfH4JllSl-TbTdI_9OgSooaGuU6vRjD-o2eoqeT24vaHi')
 
 
 class Config:
@@ -34,7 +34,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db'))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

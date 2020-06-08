@@ -4,8 +4,6 @@ import cli
 from app import blueprint
 from app.main import create_app, db
 
-# Importing all model classes to init ORM mapping
-
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 
 app.register_blueprint(blueprint)

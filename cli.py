@@ -5,7 +5,7 @@ import unittest
 
 from flask_migrate import init, migrate, upgrade
 
-from mock_data import populate_db
+from mock_data import populate_db, wipe_db
 
 
 def register(app):
@@ -44,6 +44,11 @@ def register(app):
         """Populates the database with mockdata"""
         populate_db()
 
+    @app.cli.command("wipedb")
+    def wipedb():
+        """Wipes database clean, preserving schema"""
+        wipe_db()
+
     def delete_db():
         def errorRemoveReadonly(func, path, exc):
             excvalue = exc[1]
@@ -56,6 +61,7 @@ def register(app):
                 raise Exception("error in removing migrations folder")
         try:
             shutil.rmtree("./migrations", ignore_errors=False, onerror=errorRemoveReadonly)
+            shutil.rmtree("./whooshee", ignore_errors=False, onerror=errorRemoveReadonly)
             os.remove("flask_boilerplate_main.db")
         except:
             pass

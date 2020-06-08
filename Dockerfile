@@ -14,7 +14,7 @@ RUN pip install gunicorn pymysql
 
 COPY app app
 COPY migrations migrations
-COPY parthenopeddit.py config.py cli.py mock_data.py boot.sh ./
+COPY parthenopeddit.py config.py cli.py mock_data.py boot.sh cert.pem key.pem ./
 RUN chmod +x boot.sh
 
 EXPOSE 5000
