@@ -64,3 +64,6 @@ docker-compose down -v
 
 launch command with app context
 docker-compose exec web COMMAND ARGS
+
+launch command with app context -> populate db
+docker-compose exec web flask populatedb
