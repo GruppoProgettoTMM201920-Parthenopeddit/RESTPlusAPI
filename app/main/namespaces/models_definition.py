@@ -172,7 +172,7 @@ def get_comment_model(api):
 def get_review_model(api):
     review_model = review_mapping.copy()
     review_model['author'] = fields.Nested(get_simple_user_model(api))
-    review_model['reviewed_course']: fields.Nested(get_course_model(api))
+    review_model['reviewed_course'] = fields.Nested(get_course_model(api))
     return api.model('review', review_model)
 
 
