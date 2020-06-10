@@ -38,6 +38,15 @@ class Group(Board):
     def members_num(self):
         return self.members.count()
 
+    @hybrid_property
+    def involved_users(self):
+        from app.main.model.user import User
+        from app.main.model.group_invite import GroupInvite
+
+        return self.members.join(User).with_entities(User).union(
+            self.invites.join(User, User.id == GroupInvite.invited_id).with_entities(User)
+        )
+
     # INHERITANCE
     __mapper_args__ = {
         'polymorphic_identity': 'group',

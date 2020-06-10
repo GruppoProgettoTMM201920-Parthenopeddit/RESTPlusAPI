@@ -4,9 +4,10 @@ from flask_restplus import Namespace, Resource
 from app.main.namespaces.groups.group_decorator import require_group_membership, require_group_ownership
 from app.main.namespaces.groups.groups_services import get_user_groups, create_group, get_user_group_invites, \
     get_group_by_id, leave_group, invite_member, answer_to_invite, get_group_invites, get_group_members, make_owner, \
-    get_group_posts, publish_post_to_group
+    get_group_posts, publish_post_to_group, search_user_for_group_invite, undo_invite, kick_from_group
 from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, \
-    get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_post_model, get_new_post_model
+    get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_post_model, get_new_post_model, \
+    get_simple_user_model
 from app.main.util.auth_decorator import login_required
 from app.main.util.selective_marshal_model_decorator import selective_marshal_with
 
@@ -95,10 +96,45 @@ class GroupInvite(Resource):
     @login_required(api)
     @require_group_membership(api)
     @api.marshal_list_with(get_group_invite_model(api), code=200, description="Successfully retrieved group'd invites")
-    @api.response(200, "Successfully retrieved group'd invites")
+    @api.response(200, "Successfully retrieved group's invites")
     def get(self, group, **kwargs):
         """Get group invites"""
         return get_group_invites(group)
+
+
+@api.route("/<int:group_id>/invite/<string:other_user>/undo")
+@api.param('group_id', 'The Group identifier')
+@api.param('other_user', 'The Invited user identifier')
+class UndoGroupInvite(Resource):
+    @login_required(api)
+    @require_group_ownership(api)
+    @api.response(201, 'Successfully removed invite')
+    def post(self, group, other_user, **kwargs):
+        """Undo invite"""
+        return undo_invite(group, other_user)
+
+
+@api.route("/<int:group_id>/kick/<string:other_user>")
+@api.param('group_id', 'The Group identifier')
+@api.param('other_user', 'The Invited user identifier')
+class KickFromGroup(Resource):
+    @login_required(api)
+    @require_group_ownership(api)
+    @api.response(201, 'Successfully kicked user')
+    def post(self, group, other_user, **kwargs):
+        """Kick user"""
+        return kick_from_group(group, other_user)
+
+
+@api.route("/<int:group_id>/invite/search/<string:user_id>")
+@api.param('group_id', 'The Group identifier')
+@api.param('user_id', 'Searched user')
+class GroupSearchForInvite(Resource):
+    @login_required(api)
+    @require_group_ownership(api)
+    @api.marshal_list_with(get_simple_user_model(api))
+    def get(self, group, user_id, **kwargs):
+        return search_user_for_group_invite(group, user_id)
 
 
 @api.route("/<int:group_id>/invite/answer")

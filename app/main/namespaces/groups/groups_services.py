@@ -113,13 +113,47 @@ def invite_member(user, group, request):
     db.session.add_all(invites)
     db.session.commit()
 
-    print(invites)
-
     return invites, 201
+
+
+def undo_invite(group, other_user):
+    invite = GroupInvite.query.filter(
+        GroupInvite.group_id == group.id
+    ).filter(
+        GroupInvite.invited_id == other_user
+    ).one()
+
+    db.session.delete(invite)
+    db.session.commit()
+
+    return {}, 201
+
+
+def kick_from_group(group, other_user):
+    membership = GroupMember.query.filter(
+        GroupMember.group_id == group.id
+    ).filter(
+        GroupMember.user_id == other_user
+    ).filter(
+        GroupMember.is_owner == False
+    ).one()
+
+    db.session.delete(membership)
+    db.session.commit()
+
+    return {}, 201
 
 
 def get_group_invites(group):
     return group.invites.all(), 200
+
+
+def search_user_for_group_invite(group, user_id):
+    result = User.query.filter(
+        User.id.notin_(group.involved_users.with_entities(User.id))
+    ).whooshee_search(user_id).all()
+    
+    return result, 200
 
 
 def answer_to_invite(user, group_id, request):
@@ -240,9 +274,7 @@ def __send_group_invites(inviter_user, group, invited_users_id_list):
             invited_users_id_list
         ),
         User.id.notin_(
-            group.members.join(User).with_entities(User.id).union(
-                group.invites.join(User, User.id == GroupInvite.invited_id).with_entities(User.id)
-            )
+            group.involved_users.with_entities(User.id)
         )
     ).all()
 
