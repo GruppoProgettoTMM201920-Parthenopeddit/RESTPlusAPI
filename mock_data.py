@@ -59,11 +59,6 @@ def populate_db():
     course1.followers.append(user2)
     course1.followers.append(user3)
 
-    course2 = Course(name="Corso di test. do not use")
-    db.session.add(course2)
-
-    course2.followers.append(user1)
-
     review1 = Review(author=user2, reviewed_course=course1, body="Il miglior corso di sempre", score_liking=5, score_difficulty=3)
     db.session.add(review1)
     review2 = Review(author=user3, reviewed_course=course1, body="Troppo difficile", score_liking=2, score_difficulty=5)
@@ -126,6 +121,14 @@ def populate_db():
     db.session.add(m2)
     db.session.add(m3)
     db.session.add(m4)
+
+    db.session.add(Course(name="TECNOLOGIE WEB"))
+    db.session.add(Course(name="PROGRAMMAZIONE 1"))
+    db.session.add(Course(name="PROGRAMMAZIONE 2"))
+    db.session.add(Course(name="PROGRAMMAZIONE 3"))
+    db.session.add(Course(name="CALCOLO NUMERICO"))
+    db.session.add(Course(name="CALCOLO PARALLELO"))
+    db.session.add(Course(name="ELABORAZIONE IMMAGINI"))
 
     db.session.commit()
     whooshee.reindex()
