@@ -5,6 +5,7 @@ from app.main.namespaces.content_accessibility import is_post_accessible
 from app.main.namespaces.like_dislike_framework import like_content, dislike_content
 from app.main.util.extract_resource import extract_resource
 from app.main.model.course import Course
+from app.main.namespaces.groups.group_decorator import check_group_accessibility
 
 
 def search_post(user, searched_post_title):
@@ -47,9 +48,8 @@ def save_new_post(user, request):
             return response_object, 300
         else:
             if board.type == 'group':
-                group = board
-                members = group.members.all()
-                if user not in members:
+                accessible, is_owner, group = check_group_accessibility(user, board_id)
+                if not accessible:
                     response_object = {
                         'status': 'error',
                         'message': 'Cant post to private group',

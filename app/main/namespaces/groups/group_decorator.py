@@ -4,7 +4,7 @@ from app.main.model.group_member import GroupMember
 
 
 def check_group_accessibility(user, group_id):
-    membership = user.groups.filter(GroupMember.group_id == group_id).first()
+    membership = user.groups.filter(GroupMember.group_id == group_id).one()
 
     if membership:
         return True, membership.is_owner, membership.group
