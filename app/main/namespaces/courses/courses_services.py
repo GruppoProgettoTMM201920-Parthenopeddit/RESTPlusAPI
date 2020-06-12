@@ -15,7 +15,7 @@ def search_course(course_name):
         }
         return response_object, 300
 
-    return Board.query.filter(Board.type == 'course').whooshee_search(course_name).all(), 200
+    return Board.query.filter(Board.type == 'course').whooshee_search(course_name).limit(20).all(), 200
 
 
 def get_user_courses(user):

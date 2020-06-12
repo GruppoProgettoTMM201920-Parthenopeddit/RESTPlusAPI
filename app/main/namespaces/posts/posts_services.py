@@ -23,7 +23,7 @@ def search_post(user, searched_post_title):
         Post.query.filter(
             Post.posted_to_board_id == None
         )
-    ).whooshee_search(searched_post_title).all(), 200
+    ).whooshee_search(searched_post_title).limit(20).all(), 200
 
 
 def save_new_post(user, request):

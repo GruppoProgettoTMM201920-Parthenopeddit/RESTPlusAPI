@@ -15,7 +15,7 @@ def search_user(user, searched_user_id):
         }
         return response_object, 300
 
-    return User.query.whooshee_search(searched_user_id).all(), 200
+    return User.query.whooshee_search(searched_user_id).limit(20).all(), 200
 
 
 def change_display_name(user, request):
