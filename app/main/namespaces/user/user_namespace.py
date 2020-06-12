@@ -81,7 +81,6 @@ class UserComments(Resource):
 @api.route("/feed/<int:per_page>/<int:page>")
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many posts per page')
-@api.expect(get_transaction_start_datetime_model(api))
 class UserFeed(Resource):
     @login_required(api)
     @api.marshal_list_with(get_post_model(api))
