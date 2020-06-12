@@ -80,12 +80,12 @@ def get_user_comments(user, fetched_user_id, per_page, page):
 
 def get_user_feed(user, per_page, page, request):
     try:
-        timestamp = extract_resource(request, 'transaction_start_datetime')
+        timestamp = request.headers['transaction_start_datetime']
     except:
         timestamp = None
 
     try:
-        if page != 1:
+        if page == 1:
             return user.get_posts_feed.order_by(
                 Post.timestamp.desc()
             ).paginate(
@@ -93,6 +93,13 @@ def get_user_feed(user, per_page, page, request):
                 page=page
             ).items, 200
         else:
+            if timestamp == None:
+                response_object = {
+                    'status': 'error',
+                    'message': 'No transaction start datetime provided',
+                }
+                return response_object, 471
+
             return user.get_posts_feed.order_by(
                 Post.timestamp.desc()
             ).filter(
@@ -101,7 +108,7 @@ def get_user_feed(user, per_page, page, request):
                 per_page=per_page,
                 page=page
             ).items, 200
-    except:
+    except Exception:
         response_object = {
             'status': 'error',
             'message': 'end of content',
