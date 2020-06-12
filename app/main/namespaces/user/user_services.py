@@ -78,10 +78,32 @@ def get_user_comments(user, fetched_user_id, per_page, page):
     ).items, 200
 
 
-def get_user_feed(user, per_page, page):
-    return user.get_posts_feed.order_by(
-        Post.timestamp.desc()
-    ).paginate(
-        per_page=per_page,
-        page=page
-    ).items, 200
+def get_user_feed(user, per_page, page, request):
+    try:
+        timestamp = extract_resource(request, 'transaction_start_datetime')
+    except:
+        timestamp = None
+
+    try:
+        if page != 1:
+            return user.get_posts_feed.order_by(
+                Post.timestamp.desc()
+            ).paginate(
+                per_page=per_page,
+                page=page
+            ).items, 200
+        else:
+            return user.get_posts_feed.order_by(
+                Post.timestamp.desc()
+            ).filter(
+                Post.timestamp < timestamp
+            ).paginate(
+                per_page=per_page,
+                page=page
+            ).items, 200
+    except:
+        response_object = {
+            'status': 'error',
+            'message': 'end of content',
+        }
+        return response_object, 470

@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource
 
 from app.main.namespaces.models_definition import get_complete_user_model, get_post_model, get_review_model, \
-    get_comment_model, get_simple_user_model, get_new_display_name_model
+    get_comment_model, get_simple_user_model, get_new_display_name_model, get_transaction_start_datetime_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed, get_user_posts, get_user_reviews, \
     get_user_comments, search_user, change_display_name
 from app.main.util.auth_decorator import login_required
@@ -81,11 +81,12 @@ class UserComments(Resource):
 @api.route("/feed/<int:per_page>/<int:page>")
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many posts per page')
+@api.expect(get_transaction_start_datetime_model(api))
 class UserFeed(Resource):
     @login_required(api)
     @api.marshal_list_with(get_post_model(api))
     def get(self, user, per_page, page):
         """Fetch user posts feed"""
-        return get_user_feed(user, per_page, page)
+        return get_user_feed(user, per_page, page, request)
 
 # TODO search users

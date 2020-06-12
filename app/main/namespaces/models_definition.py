@@ -123,6 +123,10 @@ new_name_mapping = {
     'display_name': fields.String()
 }
 
+transaction_start_datetime_mapping = {
+    'transaction_start_datetime': fields.DateTime()
+}
+
 
 def get_like_dislike_score_model(api):
     return api.model('like and dislike score', like_dislike_score_mapping)
@@ -319,5 +323,10 @@ def get_user_chat_model_with_log(api):
     user_chat_model['chat_log'] = fields.List(fields.Nested(get_message_model(api)))
     return api.model('User chat log with user', user_chat_model)
 
+
 def get_new_display_name_model(api):
     return api.model('set display name', new_name_mapping)
+
+
+def get_transaction_start_datetime_model(api):
+    return api.model('transaction start date', transaction_start_datetime_mapping)
