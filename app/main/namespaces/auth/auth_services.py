@@ -6,8 +6,14 @@ from app.main.util.extract_resource import extract_resource
 
 
 def login(token, user_id):
-    result, result_code = login_request(token)
+    result, result_code, dev_fag = login_request(token)
     if result_code == 200:
+        if not dev_fag and not result['user']['grpDes'] == "Studenti" and not result['user']['grpId'] == 6:
+            return {
+               'status': 'error',
+               'message': 'not a student'
+                   }, 499
+
         user = User.query.filter(User.id == user_id).first()
         if not user:
             new_user = User(id=user_id)

@@ -17,9 +17,9 @@ def token_is_valid(token):
 def login_request(token):
     if BYPASS_LOGIN:
         print("bypassed login_request")
-        return {"dev": True}, 200
+        return {"dev": True}, 200, True
 
     s = requests.Session()
     s.headers.update({'authorization': 'Basic {}'.format(token)})
     r = s.get('https://api.uniparthenope.it/UniparthenopeApp/v1/login')
-    return r.json(), r.status_code
+    return r.json(), r.status_code, False
