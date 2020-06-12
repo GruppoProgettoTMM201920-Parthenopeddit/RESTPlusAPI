@@ -62,9 +62,7 @@ class UnfollowCourseByID(Resource):
         return unfollow_course(user, course_id)
 
 
-@api.route("/<int:course_id>/posts/", defaults={'per_page': 20, 'page': 1})
-@api.route("/<int:course_id>/posts/<int:page>", defaults={'per_page': 20})
-@api.route("/<int:course_id>/posts/<int:per_page>/<int:page>")
+@api.route("/<int:course_id>/posts/<per_page>/<page>")
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many posts per page')
 @api.param('course_id')
@@ -72,7 +70,7 @@ class CoursePostsByID(Resource):
     @login_required(api)
     @api.marshal_list_with(get_post_model(api), code=200, description='Post successfully retrieved')
     def get(self, course_id, per_page, page, **kwargs):
-        return get_course_posts(course_id, per_page, page)
+        return get_course_posts(course_id, per_page=int(per_page), page=int(page), request=request)
 
 
 @api.route("/<int:course_id>/posts")
@@ -85,9 +83,7 @@ class NewCoursePost(Resource):
         return publish_post_to_course(user, course_id, request)
 
 
-@api.route("/<int:course_id>/reviews/", defaults={'per_page': 20, 'page': 1})
-@api.route("/<int:course_id>/reviews/<int:page>", defaults={'per_page': 20})
-@api.route("/<int:course_id>/reviews/<int:per_page>/<int:page>")
+@api.route("/<int:course_id>/reviews/<per_page>/<page>")
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many reviews per page')
 @api.param('course_id')
@@ -95,7 +91,7 @@ class CourseReviewsByID(Resource):
     @login_required(api)
     @api.marshal_with(get_review_model(api), code=200, description='Review successfully retrieved')
     def get(self, course_id, per_page, page, **kwargs):
-        return get_course_reviews(course_id, per_page, page)
+        return get_course_reviews(course_id, per_page=int(per_page), page=int(page), request=request)
 
 
 @api.route("/<int:course_id>/reviews")

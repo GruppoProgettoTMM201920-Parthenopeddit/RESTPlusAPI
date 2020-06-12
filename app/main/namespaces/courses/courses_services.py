@@ -4,6 +4,7 @@ from app.main.model.course import Course
 from app.main.model.post import Post
 from app.main.model.review import Review
 from app.main.util.extract_resource import extract_resource
+from app.main.namespaces.pagination_decorator import get_paginated_result
 
 
 def search_course(course_name):
@@ -71,13 +72,25 @@ def unfollow_course(user, course_id):
     return response_object, 201
 
 
-def get_course_posts(course_id, per_page, page):
-    course = Course.query.filter(Course.id == course_id).first_or_404()
+def get_course_posts(course_id, per_page, page, request):
+    try:
+        timestamp = request.headers['transaction_start_datetime']
+    except:
+        timestamp = None
 
-    return course.posts.paginate(
+    query = Course.query.filter(
+        Course.id == course_id
+    ).first_or_404().posts.order_by(
+        Post.timestamp.desc()
+    )
+
+    return get_paginated_result(
+        query=query,
+        page=page,
         per_page=per_page,
-        page=page
-    ).items, 200
+        field=Post.timestamp,
+        timestamp=timestamp
+    )
 
 
 def publish_post_to_course(user, course_id, request):
@@ -97,13 +110,25 @@ def publish_post_to_course(user, course_id, request):
     return new_post, 201
 
 
-def get_course_reviews(course_id, per_page, page):
-    course = Course.query.filter(Course.id == course_id).first_or_404()
+def get_course_reviews(course_id, per_page, page, request):
+    try:
+        timestamp = request.headers['transaction_start_datetime']
+    except:
+        timestamp = None
 
-    return course.reviews.paginate(
+    query = Course.query.filter(
+        Course.id == course_id
+    ).first_or_404().reviews.order_by(
+        Review.timestamp.desc()
+    )
+
+    return get_paginated_result(
+        query=query,
+        page=page,
         per_page=per_page,
-        page=page
-    ).items, 200
+        field=Review.timestamp,
+        timestamp=timestamp
+    )
 
 
 def publish_review_to_course(user, course_id, request):

@@ -7,6 +7,7 @@ from app.main.model.message import Message
 from app.main.model.post import Post
 from app.main.model.user import User
 from app.main.util.extract_resource import extract_resource, extract_object_resource
+from app.main.namespaces.pagination_decorator import get_paginated_result
 
 
 def get_user_groups(user):
@@ -201,13 +202,23 @@ def make_owner(group, request):
     return owners, 201
 
 
-def get_group_posts(group, per_page, page):
-    return group.posts.order_by(
+def get_group_posts(group, per_page, page, request):
+    try:
+        timestamp = request.headers['transaction_start_datetime']
+    except:
+        timestamp = None
+
+    query = group.posts.order_by(
         Post.timestamp.desc()
-    ).paginate(
+    )
+
+    return get_paginated_result(
+        query=query,
+        page=page,
         per_page=per_page,
-        page=page
-    ).items, 200
+        field=Post.timestamp,
+        timestamp=timestamp
+    )
 
 
 def publish_post_to_group(user, group, request):

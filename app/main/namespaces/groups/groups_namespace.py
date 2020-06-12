@@ -176,9 +176,7 @@ class GroupsMembersMakeOnwer(Resource):
         return make_owner(group, request)
 
 
-@api.route("/<int:group_id>/posts/", defaults={'per_page': 20, 'page': 1})
-@api.route("/<int:group_id>/posts/<int:page>", defaults={'per_page': 20})
-@api.route("/<int:group_id>/posts/<int:per_page>/<int:page>")
+@api.route("/<int:group_id>/posts/<per_page>/<page>")
 @api.param('page', 'Page to fetch')
 @api.param('per_page', 'How many posts per page')
 @api.param('group_id', 'The Group identifier')
@@ -188,7 +186,7 @@ class GroupPostsByPage(Resource):
     @api.marshal_with(get_post_model(api), code=200, description='Post successfully retrieved')
     def get(self, group, per_page, page, **kwargs):
         """Get group published posts"""
-        return get_group_posts(group, per_page, page)
+        return get_group_posts(group, per_page=int(per_page), page=int(page), request=request)
 
 
 @api.route("/<int:group_id>/posts")
