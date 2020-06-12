@@ -2,6 +2,8 @@ from app.main.model.post import Post
 from app.main.model.user import User
 from app.main.util.extract_resource import extract_resource
 from app.main import db
+from app.main.model.comment import Comment
+from app.main.model.review import Review
 
 
 def search_user(user, searched_user_id):
@@ -57,7 +59,7 @@ def get_user_reviews(user, fetched_user_id, per_page, page):
         fetched_user = user
 
     return fetched_user.published_reviews.order_by(
-        Post.timestamp.desc()
+        Review.timestamp.desc()
     ).paginate(
         per_page=per_page,
         page=page
@@ -71,7 +73,7 @@ def get_user_comments(user, fetched_user_id, per_page, page):
         fetched_user = user
 
     return fetched_user.published_comments.order_by(
-        Post.timestamp.desc()
+        Comment.timestamp.desc()
     ).paginate(
         per_page=per_page,
         page=page
