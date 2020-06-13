@@ -22,7 +22,7 @@ docker --version
 
 * Clonare o scaricare una copia del [Repository di GitHub](https://github.com/GruppoProgettoTMM201920-Parthenopeddit/RESTPlusAPI.git)  
 
-**Step opzionale in fase di sviluppo (ma obbligatorio in produzione):**  
+* **Step opzionale in fase di sviluppo (ma obbligatorio in produzione):**  
 <details>
   <summary>impostare le variabili d'ambiente delle password dei servizi</summary>
   
