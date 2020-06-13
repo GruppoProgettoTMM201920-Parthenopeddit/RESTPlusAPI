@@ -1,6 +1,6 @@
 # Parthenopeddit API
 
-Le API del progetto parthenopedditrappresentano la backend del social inter-universitario della Parthenope di Napoli.
+Queste API rappresentano la backend del social inter-universitario della Parthenope di Napoli, Parthenopeddit.
 
 ## Come utilizzarle
 
