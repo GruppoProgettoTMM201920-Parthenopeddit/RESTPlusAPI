@@ -4,7 +4,8 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_whooshee import Whooshee
-from pyfcm import FCMNotification
+# TODO, NOITIFICATIONS
+# from pyfcm import FCMNotification
 
 from config import config_by_name, FCM_API_KEY
 
@@ -12,7 +13,8 @@ db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 migrate = Migrate()
 cors = CORS()
-fcm = FCMNotification(FCM_API_KEY)
+# TODO, NOITIFICATIONS
+# fcm = FCMNotification(FCM_API_KEY)
 whooshee = Whooshee()
 
 

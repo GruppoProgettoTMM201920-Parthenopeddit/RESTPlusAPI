@@ -5,9 +5,8 @@ COMMENTS_RECURSIVE_DEPTH = 5
 DEFAULT_POSTS_PER_PAGE_AMOUNT = 20
 BYPASS_LOGIN = os.getenv('BYPASS_LOGIN', False)
 
-# Your api-key can be gotten from:
-# https://console.firebase.google.com/project/<project-name>/settings/cloudmessaging
-FCM_API_KEY = os.getenv('FCM_API_KEY')
+# TODO, NOITIFICATIONS
+# FCM_API_KEY = os.getenv('FCM_API_KEY')
 
 
 class Config:
