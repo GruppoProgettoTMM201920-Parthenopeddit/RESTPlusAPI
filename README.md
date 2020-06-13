@@ -9,7 +9,7 @@ Queste istruzioni mostreranno come ottenere una copia del progetto sulla macchin
 ### Prerequisiti
 
 L'unico prerequisito essenziale è il software [Docker](https://www.docker.com/)  
-In caso si voglia modificare i file sorgente, è consigliato un IDE per Python (es. [PyCharm](https://www.jetbrains.com/pycharm/) )
+In caso si vogliano modificare i file sorgente, è consigliato un IDE per Python (es. [PyCharm](https://www.jetbrains.com/pycharm/) )
 
 ### Installazione
 
@@ -75,4 +75,4 @@ docker-compose exec web flask populatedb
 
 ## Licenza
 
-Procetto con licenza Apache License, Version 2.0.
+Progetto con licenza Apache License, Version 2.0.
