@@ -60,4 +60,5 @@ docker-compose exec web flask populatedb
 * [Flask-RESTPlus](https://flask-restplus.readthedocs.io/) - Supporto a Flask per lo sviluppo di API Rest
 * [SQLAlchemy](https://www.sqlalchemy.org/) e [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) - Toolkit per ORM SQL + integrazione con Flask
 * [PyMySQL](https://pypi.org/project/PyMySQL/) - Interfaccia al database
-* []() - 
+* [Whoosh](https://pypi.org/project/Whoosh/) e [Flask-Whooshee](https://pypi.org/project/flask-whooshee/) - Ricerca testuale indicizzata
+* [Gunicorn](https://pypi.org/project/gunicorn/) - HTTP Server
