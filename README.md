@@ -68,3 +68,11 @@ docker-compose exec web flask populatedb
 * [PyMySQL](https://pypi.org/project/PyMySQL/) - Interfaccia al database
 * [Whoosh](https://pypi.org/project/Whoosh/) e [Flask-Whooshee](https://pypi.org/project/flask-whooshee/) - Ricerca testuale indicizzata
 * [Gunicorn](https://pypi.org/project/gunicorn/) - HTTP Server
+
+## Autore
+
+**Francesco Bottino**  - [GitHub](https://github.com/FrancescoBottino)
+
+## Licenza
+
+Procetto con licenza Apache License, Version 2.0.
