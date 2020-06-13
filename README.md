@@ -21,14 +21,20 @@ docker --version
 ```
 
 * Clonare o scaricare una copia del [Repository di GitHub](https://github.com/GruppoProgettoTMM201920-Parthenopeddit/RESTPlusAPI.git)  
+
+**Step opzionale in fase di sviluppo (ma obbligatorio in produzione):**  
+<details>
+  <summary>impostare le variabili d'ambiente delle password dei servizi</summary>
+  
+  Recarsi sui file **.env.prod**, e **.env.mysql** e sostituire tutte le occorrenze di *<web-secret-key>* e *<db-secret-key>* rispettivamente con le password del servizio web, e del database
+</details>
+  
+
 * Sempre sul terminale, recarsi sulla directory della root del progetto, e utilizzare il comando:
 
 ```
 docker-compose up -d --build
 ```
-
-* Ultimo, ma non meno importante, step è quello di impostare le variabili d'ambiente delle password dei servizi. Questo è opzionale in fase di produzione ma **obbligatorio** in fase di produzione.  
-Recarsi sui file **.env.prod**, e **.env.mysql** e sostituire tutte le occorrenze di *<web-secret-key>* e *<db-secret-key>* rispettivamente con le password del servizio web, e del database  
 
 * Attendere qualche secondo, dipende dalla velocità della vostra macchina, e poi visitate con il vostro browser l'indirizzo http://localhost:8000
 
