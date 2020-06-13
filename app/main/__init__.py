@@ -7,7 +7,7 @@ from flask_whooshee import Whooshee
 # TODO, NOITIFICATIONS
 # from pyfcm import FCMNotification
 
-from config import config_by_name, FCM_API_KEY
+from config import config_by_name # , TODO NOTIFICATIONS FCM_API_KEY
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
