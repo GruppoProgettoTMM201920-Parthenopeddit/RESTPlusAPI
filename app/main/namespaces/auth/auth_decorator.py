@@ -7,22 +7,27 @@ from app.main.util.UniparthenopeAPI.requests import token_is_valid
 from app.main.util.token_encoding import token_decode_username
 
 
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if 'authorization' not in request.headers:
-            return {
-                'status': 'error',
-                'message': 'Authorization token missing'
-            }, 455
+def token_required(api):
+    def wrapper_func(f):
+        @api.response(455, 'Authorization token missing')
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if 'authorization' not in request.headers:
+                return {
+                    'status': 'error',
+                    'message': 'Authorization token missing'
+                }, 455
 
-        auth = request.headers['authorization']
-        token = auth.split()[1]
+            auth = request.headers['authorization']
+            token = auth.split()[1]
 
-        user_id = token_decode_username(token)
+            user_id = token_decode_username(token)
 
-        return f(*args, **kwargs, token=token, user_id=user_id)
-    return decorated
+            return f(*args, **kwargs, token=token, user_id=user_id)
+
+        return decorated
+
+    return wrapper_func
 
 
 def login_required(api):
@@ -34,23 +39,25 @@ def login_required(api):
         def decorated(*args, **kwargs):
             if 'authorization' not in request.headers:
                 return {
-                           'status': 'error',
-                           'message': 'Authorization token missing'
-                       }, 451
+                    'status': 'error',
+                    'message': 'Authorization token missing'
+                }, 455
+
             auth = request.headers['authorization']
             token = auth.split()[1]
+
             if not token_is_valid(token):
                 return {
-                           'status': 'error',
-                           'message': 'Invalid token'
-                       }, 452
+                    'status': 'error',
+                    'message': 'Invalid token'
+                }, 456
             user_id = token_decode_username(token)
             user = User.query.filter(User.id == user_id).first()
             if not user:
                 return {
-                           'status': 'error',
-                           'message': 'Login required'
-                       }, 453
+                    'status': 'error',
+                    'message': 'Login required'
+                }, 457
             return f(*args, **kwargs, user=user)
 
         return decorated
