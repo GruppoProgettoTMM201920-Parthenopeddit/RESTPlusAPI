@@ -25,10 +25,10 @@ class UserLogin(Resource):
 @api.route("/register_device_token")
 class RegisterDeviceToken(Resource):
     @login_required(api)
-    @api.response(452, 'Missing expected data')
     @api.response(200, 'Token already registered for user')
     @api.response(201, 'Token registered for user')
     @api.response(202, 'Changed token Owner')
+    @api.response(452, 'Missing expected data')
     @api.expect(get_new_device_token_model(api))
     def post(self, user):
         """Register device token used in notifications"""
