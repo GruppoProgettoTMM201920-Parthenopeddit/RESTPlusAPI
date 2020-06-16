@@ -1,14 +1,14 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.namespaces.groups.group_decorator import require_group_membership, require_group_ownership
+from app.main.namespaces.groups.groups_decorator import require_group_membership, require_group_ownership
 from app.main.namespaces.groups.groups_services import get_user_groups, create_group, get_user_group_invites, \
     get_group_by_id, leave_group, invite_member, answer_to_invite, get_group_invites, get_group_members, make_owner, \
     get_group_posts, publish_post_to_group, search_user_for_group_invite, undo_invite, kick_from_group
 from app.main.namespaces.models_definition import get_user_group_model, get_new_group_model, \
     get_group_invite_model, get_group_model, get_users_id_list, get_answer_model, get_post_model, get_new_post_model, \
     get_simple_user_model
-from app.main.util.auth_decorator import login_required
+from main.namespaces.auth.auth_decorator import login_required
 from app.main.util.selective_marshal_model_decorator import selective_marshal_with
 
 api = Namespace('Groups', description="Users ad-hoc Groups framework")

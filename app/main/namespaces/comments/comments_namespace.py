@@ -5,7 +5,7 @@ from app.main.namespaces.comments.comments_services import save_new_comment, get
     like_comment_by_id
 from app.main.namespaces.models_definition import get_new_comment_model, get_comment_model, \
     get_comment_with_comments_model, get_like_dislike_score_model
-from app.main.util.auth_decorator import login_required
+from main.namespaces.auth.auth_decorator import login_required
 
 api = Namespace('Comments', description="User's comments framework")
 

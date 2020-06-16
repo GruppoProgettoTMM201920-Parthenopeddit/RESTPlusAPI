@@ -5,7 +5,7 @@ from app.main.namespaces.models_definition import get_new_review_model, get_revi
     get_review_with_comments_model, get_like_dislike_score_model
 from app.main.namespaces.reviews.reviews_services import save_new_review, get_review_by_id, dislike_review_by_id, \
     like_review_by_id
-from app.main.util.auth_decorator import login_required
+from main.namespaces.auth.auth_decorator import login_required
 
 api = Namespace('Reviews', description="User's reviews framework")
 

@@ -2,16 +2,6 @@ from functools import wraps
 
 from flask_restplus import marshal
 
-models = [{
-    'model': "model1",
-    'code': 201,
-    'list': False
-}, {
-    'model': "model2",
-    'code': 202,
-    'list': True
-}]
-
 
 def selective_marshal_with(models):
     """

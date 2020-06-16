@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from app.main.util.auth_decorator import login_required
+from main.namespaces.auth.auth_decorator import login_required
 from app.main.namespaces.messages.messages_service import get_user_chats_with_users, get_user_chat_with_user, \
     send_message_to_user
 from app.main.namespaces.models_definition import get_new_message_model, get_message_model, get_user_chat_model, \

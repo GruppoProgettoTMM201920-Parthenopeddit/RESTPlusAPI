@@ -3,7 +3,7 @@ from flask_restplus import Resource, Namespace
 
 from app.main.namespaces.auth.auth_services import login, register_new_token
 from app.main.namespaces.models_definition import get_complete_user_model, get_new_device_token_model
-from app.main.util.auth_decorator import token_required, login_required
+from main.namespaces.auth.auth_decorator import token_required, login_required
 
 api = Namespace('Authentication', description='authentication framework')
 
