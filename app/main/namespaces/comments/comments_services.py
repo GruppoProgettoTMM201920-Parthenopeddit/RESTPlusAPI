@@ -8,16 +8,18 @@ from app.main.util.extract_resource import extract_resource
 def save_new_comment(user, request):
     try:
         body = extract_resource(request, 'body')
+    except:
+        return {
+            'status': 'error',
+            'message': 'Missing expected data: Comment body'
+        }, 452
+    try:
         commented_content_id = int(extract_resource(request, 'commented_content_id'))
     except:
-        return {}, 400
-
-    if commented_content_id is None:
-        response_object = {
+        return {
             'status': 'error',
-            'message': 'Invalid payload. content_id needed.',
-        }
-        return response_object, 300
+            'message': 'Missing expected data: Comment commented-content id'
+        }, 452
 
     accessible, content = is_content_accessible(user, commented_content_id)
 

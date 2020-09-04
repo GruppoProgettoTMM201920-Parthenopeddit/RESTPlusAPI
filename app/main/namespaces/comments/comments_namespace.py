@@ -19,6 +19,7 @@ class Comments(Resource):
     @api.response(300, 'Invalid payload. content_id needed.')
     @api.response(401, 'Commented post is private')
     @api.response(404, 'Cant find content to comment')
+    @api.response(452, 'Missing expected data')
     def post(self, user):
         """Publish new comment to a user's content"""
         return save_new_comment(user, request)
