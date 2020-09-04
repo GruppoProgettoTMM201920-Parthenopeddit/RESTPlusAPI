@@ -5,7 +5,7 @@ from app.main.namespaces.models_definition import get_new_post_model, get_post_m
     get_like_dislike_score_model
 from app.main.namespaces.posts.posts_services import save_new_post, get_post_by_id, dislike_post_by_id, like_post_by_id, \
     search_post
-from main.namespaces.auth.auth_decorator import login_required
+from app.main.namespaces.auth.auth_decorator import login_required
 
 api = Namespace('Posts', description="User's post framework")
 

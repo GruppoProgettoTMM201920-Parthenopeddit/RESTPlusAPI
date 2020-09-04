@@ -6,7 +6,7 @@ from app.main.namespaces.courses.courses_services import search_course, get_user
     publish_review_to_course
 from app.main.namespaces.models_definition import get_course_model, get_post_model, get_new_post_model, \
     get_simple_user_model, get_review_model, get_new_review_model
-from main.namespaces.auth.auth_decorator import login_required
+from app.main.namespaces.auth.auth_decorator import login_required
 
 api = Namespace('Courses', description="Uniparthenope courses framework")
 

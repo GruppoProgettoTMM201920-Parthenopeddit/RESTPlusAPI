@@ -5,7 +5,7 @@ from app.main.namespaces.models_definition import get_complete_user_model, get_p
     get_comment_model, get_simple_user_model, get_new_display_name_model
 from app.main.namespaces.user.user_services import get_user_data, get_user_feed, get_user_posts, get_user_reviews, \
     get_user_comments, search_user, change_display_name
-from main.namespaces.auth.auth_decorator import login_required
+from app.main.namespaces.auth.auth_decorator import login_required
 
 api = Namespace('User', description="User's specific actions framework")
 
